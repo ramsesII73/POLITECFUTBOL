@@ -19,7 +19,6 @@ public class EmpleadoBase {
 	 * @param password La contraseña del usuario para autenticarse en el sistema.
 	 */
 	public EmpleadoBase(String idDeEmpleado, String usuario, String password) {
-		super();
 		this.idDeEmpleado = idDeEmpleado;
 		this.usuario = usuario;
 		this.password = password;
