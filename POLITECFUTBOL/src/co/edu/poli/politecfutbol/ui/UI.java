@@ -67,7 +67,7 @@ public class UI {
 	}
 
 	private void login() {
-		 Factory<SecurityManager> factory = new IniSecurityManagerFactory("classpath:shiro.ini");
+		 Factory<SecurityManager> factory = new IniSecurityManagerFactory("classpath:resources/shiro.ini");
 	        SecurityManager securityManager = factory.getInstance();
 	        SecurityUtils.setSecurityManager(securityManager);
 
