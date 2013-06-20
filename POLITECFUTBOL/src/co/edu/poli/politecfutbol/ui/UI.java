@@ -204,8 +204,18 @@ public class UI {
 		
 		System.out.print("Ingrese el teléfono de contacto: ");
 		
-		String numeroDeDocumento = sc.next();
+		String numeroDeTelefono = sc.next();
+		
+		System.out.print("Ingrese la dirección del cliente: ");
+		
+		String direccion = sc.next();
+		
+		System.out.println("Ingrese el e-mail del cliente");
+		
+		String email = sc.next();
 		
 		// pedir info de la reserva
+		
+		
 	}
 }
