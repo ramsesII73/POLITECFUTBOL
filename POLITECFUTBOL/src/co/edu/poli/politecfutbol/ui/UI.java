@@ -8,6 +8,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Scanner;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Esta clase se encarga de mostrar la interfaz interactiva por línea de
  * comandos
@@ -17,13 +20,16 @@ import java.util.Scanner;
  */
 public class UI {
 	
+	private static final transient Logger log = LoggerFactory.getLogger(UI.class);
 	private Scanner sc;
 	private Console c;
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
+		
 		new UI();
+
 	}
 
 	public UI() {
