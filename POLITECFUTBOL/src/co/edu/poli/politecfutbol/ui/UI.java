@@ -159,34 +159,41 @@ public class UI {
 			currentUser.logout();
 		}
 	}
-	
-	
+
 	public void realizarReserva() {
 		Cliente cliente;
 		FormaDePago formaDePago;
 		Cancha[] canchasAReservar;
 		Ciudad ciudad;
 		EmpleadoBase empleado;
-		
+
 		// pedir info de cliente
 		System.out.println("Información del Cliente");
-		System.out.print("Ingrese los nombres del cliente: ");
-		
-		String nombres = sc.next();
-		
-		System.out.print("Ingrese los apellidos del cliente: ");
-		
-		String apellidos = sc.next();
-		
+		System.out.print("Ingrese el primer nombre del cliente: ");
+
+		String primerNombre = sc.next();
+
+		System.out.print("Ingrese el segundo nombre del cliente: ");
+
+		String segundoNombre = sc.next();
+
+		System.out.print("Ingrese el primer apellido del cliente: ");
+
+		String primerApellido = sc.next();
+
+		System.out.print("Ingrese el segundo apellido del cliente: ");
+
+		String segundoApellido = sc.next();
+
 		System.out.println("Ingrese el tipo de documento de identificación: ");
 		System.out.println("1. Cédula");
 		System.out.println("2. NIT");
 		System.out.println("3. Pasaporte");
-		
+
 		int tipoDeDocumento = sc.nextInt();
-		TipoDeDocumento docType;
-		
-		switch(tipoDeDocumento) {
+		TipoDeDocumento docType = null;
+
+		switch (tipoDeDocumento) {
 		case 1:
 			docType = TipoDeDocumento.CC;
 			break;
@@ -197,25 +204,28 @@ public class UI {
 			docType = TipoDeDocumento.Pasaporte;
 			break;
 		}
-		
+
 		System.out.print("Ingrese el número de documento: ");
-		
+
 		String numeroDeDocumento = sc.next();
-		
+
 		System.out.print("Ingrese el teléfono de contacto: ");
-		
+
 		String numeroDeTelefono = sc.next();
-		
+
 		System.out.print("Ingrese la dirección del cliente: ");
-		
+
 		String direccion = sc.next();
-		
+
 		System.out.println("Ingrese el e-mail del cliente");
-		
+
 		String email = sc.next();
-		
+
+		cliente = new Cliente(primerNombre, segundoNombre, primerApellido,
+				segundoApellido, docType, numeroDeDocumento, numeroDeTelefono,
+				direccion, email);
+
 		// pedir info de la reserva
-		
-		
+
 	}
 }
