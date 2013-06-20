@@ -8,6 +8,11 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Scanner;
 
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.config.IniSecurityManagerFactory;
+import org.apache.shiro.mgt.SecurityManager;
+import org.apache.shiro.subject.Subject;
+import org.apache.shiro.util.Factory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,22 +62,17 @@ public class UI {
 		// en caso contrario crear la configuración inicial del sistema
 
 		login();
+		
+		System.exit(0);
 	}
 
 	private void login() {
-		String usuario;
-		String password;
-		
-		System.out.print("Ingrese su usuario: ");
-		usuario = sc.nextLine().trim();
-		
-		System.out.print("Ingrese su contraseña: ");
-		password = sc.nextLine().trim();
-		
-		if (usuario.equals("admin") && password.equals("admin")) {
-			System.out.println("OK");
-		} else {
-			System.out.println("WRONG");
-		}
+		 Factory<SecurityManager> factory = new IniSecurityManagerFactory("classpath:shiro.ini");
+	        SecurityManager securityManager = factory.getInstance();
+	        SecurityUtils.setSecurityManager(securityManager);
+
+
+	        // get the currently executing user:
+	        Subject currentUser = SecurityUtils.getSubject();
 	}
 }
