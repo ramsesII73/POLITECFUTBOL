@@ -97,9 +97,11 @@ public class UI {
 		try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(
 				properties.getProperty("rutaArchivoDeDatos")))) {
 			// si los hay cargar la información al sistema
-
+			datos = (ArrayList) ois.readObject();
 		} catch (IOException ioe) {
 			// en caso contrario crear la configuración inicial del sistema
+		} catch (ClassNotFoundException cnfe) {
+			
 		}
 
 		Factory<SecurityManager> factory = new IniSecurityManagerFactory(
