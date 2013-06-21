@@ -6,7 +6,11 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.util.ArrayList;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.Properties;
 import java.util.Scanner;
 import java.util.StringTokenizer;
 
@@ -28,6 +32,8 @@ import co.edu.poli.politecfutbol.entidades.Ciudad;
 import co.edu.poli.politecfutbol.entidades.Cliente;
 import co.edu.poli.politecfutbol.entidades.EmpleadoBase;
 import co.edu.poli.politecfutbol.entidades.FormaDePago;
+import co.edu.poli.politecfutbol.entidades.Reserva;
+import co.edu.poli.politecfutbol.entidades.Sede;
 import co.edu.poli.politecfutbol.entidades.TipoDeDocumento;
 
 /**
@@ -42,7 +48,13 @@ public class UI {
 	private static final transient Logger log = LoggerFactory
 			.getLogger(UI.class);
 	private Scanner sc;
-	private Console c;
+	private Properties properties;
+	private ArrayList datos;
+	private Cancha[] canchas;
+	private Ciudad[] ciudades;
+	private Cliente[] clientes;
+	private Reserva[] reservas;
+	private Sede[] sedes;
 
 	/**
 	 * @param args
@@ -55,7 +67,6 @@ public class UI {
 
 	public UI() {
 		sc = new Scanner(System.in);
-		c = System.console();
 
 		// mostrar pantalla de inicio
 		try (InputStreamReader isr = new InputStreamReader(new FileInputStream(
@@ -73,9 +84,23 @@ public class UI {
 			System.out.println("POLITECFUTBOL");
 		}
 
+		// cargar archivo de propiedades
+		properties = new Properties();
+		try (FileInputStream fis = new FileInputStream(
+				"/src/properties/systemparameters.properties")) {
+			properties.load(fis);
+		} catch (IOException ioe) {
+			System.out.println("Error al cargar el archivo de parámetros del sistema");
+		}
+
 		// Chequear si hay archivos serializados
-		// si los hay cargar la información al sistema
-		// en caso contrario crear la configuración inicial del sistema
+		try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(
+				properties.getProperty("rutaArchivoDeDatos")))) {
+			// si los hay cargar la información al sistema
+
+		} catch (IOException ioe) {
+			// en caso contrario crear la configuración inicial del sistema
+		}
 
 		Factory<SecurityManager> factory = new IniSecurityManagerFactory(
 				"classpath:resources/shiro.ini");
@@ -288,14 +313,33 @@ public class UI {
 
 		int horasFinal = Integer.parseInt(st.nextToken());
 		int minutosFinal = Integer.parseInt(st.nextToken());
-		
+
 		// se pide la forma de pago usada
 		System.out.println("Ingrese la forma de pago:");
 		System.out.println("1. Tarjeta de Crédito");
 		System.out.println("2. Débito");
 		System.out.println("3. Cheque");
 		System.out.println("4. Bonos");
-		
-		
+		System.out.print("Elija una opción [1-4]: ");
+
+		int opcionDePago = sc.nextInt();
+
+		switch (opcionDePago) {
+		case 1:
+			formaDePago = FormaDePago.TarjetaDeCredito;
+			break;
+		case 2:
+			formaDePago = FormaDePago.Debito;
+			break;
+		case 3:
+			formaDePago = FormaDePago.Cheque;
+			break;
+		case 4:
+			formaDePago = FormaDePago.Bonos;
+		default:
+			System.out.println("Forma de Pago inválida");
+		}
+
+		// se crea el objeto de reserva
 	}
 }

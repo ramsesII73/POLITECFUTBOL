@@ -3,13 +3,12 @@ import java.util.Date;
 
 /**
  * Esta clase representa una reserva de una cancha de fútbol. Esta clase se debe
- * instanciar cada vez que se haga una reserva
+ * instanciar cada vez que se haga una reserva.
  * 
  * @author apaternina
  * 
  */
 public class Reserva {
-
 	/*
 	 * Lista de campos de la clase
 	 */
@@ -17,7 +16,7 @@ public class Reserva {
 	private Date fechaHoraDeFin;
 	private FormaDePago formaDePago; // la forma de pago usada
 	private Cliente cliente; // el cliente que solicita la reserva
-	private EmpleadoBase empleado; // el empleado que hace la reserva
+	private String empleado; // el empleado que hace la reserva
 	private Cancha cancha; // la cancha que se está reservando
 	
 	/**
@@ -30,7 +29,7 @@ public class Reserva {
 	 * @param cancha La cancha que se está reservando.
 	 */
 	public Reserva(Date fechaHoraDeInicio, Date fechaHoraDeFin,
-			FormaDePago formaDePago, Cliente cliente, EmpleadoBase empleado,
+			FormaDePago formaDePago, Cliente cliente, String empleado,
 			Cancha cancha) {
 		super();
 		this.fechaHoraDeInicio = fechaHoraDeInicio;
@@ -56,7 +55,7 @@ public class Reserva {
 	public Cliente getCliente() {
 		return cliente;
 	}
-	public EmpleadoBase getEmpleado() {
+	public String getEmpleado() {
 		return empleado;
 	}
 	public Cancha getCancha() {
