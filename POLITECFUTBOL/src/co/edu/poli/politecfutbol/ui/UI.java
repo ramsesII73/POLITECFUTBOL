@@ -1,15 +1,12 @@
 package co.edu.poli.politecfutbol.ui;
 
-import java.io.BufferedInputStream;
-import java.io.Console;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
 import java.util.Properties;
 import java.util.Scanner;
 import java.util.StringTokenizer;
@@ -49,12 +46,11 @@ public class UI {
 			.getLogger(UI.class);
 	private Scanner sc;
 	private Properties properties;
-	private ArrayList datos;
-	private Cancha[] canchas;
-	private Ciudad[] ciudades;
-	private Cliente[] clientes;
-	private Reserva[] reservas;
-	private Sede[] sedes;
+	private ArrayList<Cancha> canchas;
+	private ArrayList<Ciudad> ciudades;
+	private ArrayList<Cliente> clientes;
+	private ArrayList<Reserva> reservas;
+	private ArrayList<Sede> sedes;
 
 	/**
 	 * @param args
@@ -68,6 +64,40 @@ public class UI {
 	public UI() {
 		sc = new Scanner(System.in);
 
+		mostrarLogo();
+
+		cargarParametrosDelSistema();
+
+		cargarDatos();
+
+		montarShiro();
+
+		login();
+
+		System.exit(0);
+	}
+
+	private void montarShiro() {
+		Factory<SecurityManager> factory = new IniSecurityManagerFactory(
+				"classpath:resources/shiro.ini");
+		SecurityManager securityManager = factory.getInstance();
+		SecurityUtils.setSecurityManager(securityManager);
+	}
+
+	private void cargarParametrosDelSistema() {
+		// cargar archivo de propiedades
+		properties = new Properties();
+		try (FileInputStream fis = new FileInputStream(
+				"/src/properties/systemparameters.properties")) {
+			properties.load(fis);
+		} catch (IOException ioe) {
+			System.out
+					.println("Error al cargar el archivo de parámetros del sistema");
+			System.exit(0);
+		}
+	}
+
+	private void mostrarLogo() {
 		// mostrar pantalla de inicio
 		try (InputStreamReader isr = new InputStreamReader(new FileInputStream(
 				"logo-sistema.txt"), "UTF-8")) {
@@ -83,35 +113,121 @@ public class UI {
 		} catch (IOException ioe) {
 			System.out.println("POLITECFUTBOL");
 		}
+	}
 
-		// cargar archivo de propiedades
-		properties = new Properties();
-		try (FileInputStream fis = new FileInputStream(
-				"/src/properties/systemparameters.properties")) {
-			properties.load(fis);
-		} catch (IOException ioe) {
-			System.out.println("Error al cargar el archivo de parámetros del sistema");
-		}
-
+	/**
+	 * Este método se usa para cargar los datos de los archivos serializados,
+	 * los cuales deben estar presentes dentro del proyecto en las rutas
+	 * previamente parametrizadas en el archivo de propiedades.
+	 */
+	private void cargarDatos() {
 		// Chequear si hay archivos serializados
-		try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(
-				properties.getProperty("rutaArchivoDeDatos")))) {
+		try (ObjectInputStream oisCanchas = new ObjectInputStream(
+				new FileInputStream(properties.getProperty("rutaCanchas")));
+				ObjectInputStream oisCiudades = new ObjectInputStream(
+						new FileInputStream(
+								properties.getProperty("rutaCiudades")));
+				ObjectInputStream oisClientes = new ObjectInputStream(
+						new FileInputStream(
+								properties.getProperty("rutaClientes")));
+				ObjectInputStream oisReservas = new ObjectInputStream(
+						new FileInputStream(
+								properties.getProperty("rutaReservas")));
+				ObjectInputStream oisSedes = new ObjectInputStream(
+						new FileInputStream(properties.getProperty("rutaSedes")));) {
 			// si los hay cargar la información al sistema
-			datos = (ArrayList) ois.readObject();
+			canchas = (ArrayList<Cancha>) oisCanchas.readObject();
+			ciudades = (ArrayList<Ciudad>) oisCanchas.readObject();
+			clientes = (ArrayList<Cliente>) oisCanchas.readObject();
+			reservas = (ArrayList<Reserva>) oisCanchas.readObject();
+			sedes = (ArrayList<Sede>) oisSedes.readObject();
+		} catch (FileNotFoundException fne) {
+			/*
+			 * en caso de que no exista algún archivo de base de datos o falte
+			 * alguno de éstos
+			 */
+			System.out
+					.println("No se encontró una base de datos existente, se procederá a crear una base de datos inicial");
+			crearBaseDeDatosInicial();
 		} catch (IOException ioe) {
-			// en caso contrario crear la configuración inicial del sistema
+			/*
+			 * En caso de que ocurra un error de IO diferente a que los archivos
+			 * no existan.
+			 */
+			System.out
+					.println("Ocurrió un error desconocido al leer la base de datos.");
+			System.out
+					.println("¿Desea crear una nueva base de datos? (nota: se perderán todos los datos salvados previamente");
+			System.out.print("Elija una opción [s/n]: ");
+
+			String opcion = sc.next();
+
+			switch (opcion) {
+			case "s":
+				System.out
+						.println("Se procederá a crear la base de datos inicial");
+				crearBaseDeDatosInicial();
+				break;
+			case "n":
+				System.out
+						.println("Se cerrará la aplicación. Por favor contacte al administrador");
+				break;
+			default:
+				System.out
+						.println("Se ha seleccionado una opción inválida. No se harán cambios a la aplicación.");
+			}
 		} catch (ClassNotFoundException cnfe) {
+			/*
+			 * En caso de que los archivos serializados no correspondan a las
+			 * clases esperadas, lo cual puede ocurrir por manipulación externa
+			 * de dichos archivos
+			 */
+			System.out
+					.println("Archivos de base de datos corruptos. La aplicación se cerrará.");
+			System.exit(0);
+		}
+	}
+
+	/**
+	 * Este método crea la base de datos inicial de la aplicación
+	 */
+	private void crearBaseDeDatosInicial() {
+		/*
+		 * Se instancian los objetos que harán parte de la base de datos
+		 */
+		canchas = new ArrayList<Cancha>();
+		ciudades = new ArrayList<Ciudad>();
+		clientes = new ArrayList<Cliente>();
+		reservas = new ArrayList<Reserva>();
+		sedes = new ArrayList<Sede>();
+
+		/*
+		 * Se llama al método de serialización
+		 */
+		serializar(canchas, ciudades, clientes, reservas, sedes);
+	}
+
+	/**
+	 * Este método se usa para serializar los objetos que hacen parte de la base
+	 * de datos de la aplicación.
+	 * 
+	 * @param canchas2
+	 *            El listado de canchas.
+	 * @param ciudades2
+	 *            El listado de ciudades.
+	 * @param clientes2
+	 *            El listado de clientes.
+	 * @param reservas2
+	 *            El listado de reservas.
+	 * @param sedes2
+	 *            El listado de sedes.
+	 */
+	private void serializar(ArrayList<Cancha> canchas2,
+			ArrayList<Ciudad> ciudades2, ArrayList<Cliente> clientes2,
+			ArrayList<Reserva> reservas2, ArrayList<Sede> sedes2) {
+		try (ObjectOutputStream oos = new ObjectOutputStream(FileOutputStream fos = new FileOutputStream())) {
 			
 		}
-
-		Factory<SecurityManager> factory = new IniSecurityManagerFactory(
-				"classpath:resources/shiro.ini");
-		SecurityManager securityManager = factory.getInstance();
-		SecurityUtils.setSecurityManager(securityManager);
-
-		login();
-
-		System.exit(0);
 	}
 
 	private void login() {
