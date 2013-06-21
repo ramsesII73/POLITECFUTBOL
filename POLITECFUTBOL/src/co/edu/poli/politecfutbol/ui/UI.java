@@ -6,7 +6,9 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.GregorianCalendar;
 import java.util.Scanner;
+import java.util.StringTokenizer;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
@@ -161,37 +163,58 @@ public class UI {
 	}
 
 	public void realizarReserva() {
+		/*
+		 * Variables locales necesarias para realizar la reserva
+		 */
 		Cliente cliente;
 		FormaDePago formaDePago;
 		Cancha[] canchasAReservar;
 		Ciudad ciudad;
 		EmpleadoBase empleado;
 
-		// pedir info de cliente
+		String primerNombre;
+		String segundoNombre;
+		String primerApellido;
+		String segundoApellido;
+		TipoDeDocumento docType;
+		String numeroDeDocumento;
+		String numeroDeTelefono;
+		String direccion;
+		String email;
+
+		/*
+		 * Sección de datos del Cliente
+		 */
 		System.out.println("Información del Cliente");
+
+		// se pide el primer nombre
 		System.out.print("Ingrese el primer nombre del cliente: ");
 
-		String primerNombre = sc.next();
+		primerNombre = sc.next();
 
+		// se pide el segundo nombre
 		System.out.print("Ingrese el segundo nombre del cliente: ");
 
-		String segundoNombre = sc.next();
+		segundoNombre = sc.next();
 
 		System.out.print("Ingrese el primer apellido del cliente: ");
 
-		String primerApellido = sc.next();
+		// se pide el primer apellido
+		primerApellido = sc.next();
 
 		System.out.print("Ingrese el segundo apellido del cliente: ");
 
-		String segundoApellido = sc.next();
+		// se pide el segundo apellido
+		segundoApellido = sc.next();
 
+		// se pide el tipo de documento de identificación
 		System.out.println("Ingrese el tipo de documento de identificación: ");
 		System.out.println("1. Cédula");
 		System.out.println("2. NIT");
 		System.out.println("3. Pasaporte");
 
 		int tipoDeDocumento = sc.nextInt();
-		TipoDeDocumento docType = null;
+		docType = null;
 
 		switch (tipoDeDocumento) {
 		case 1:
@@ -205,27 +228,74 @@ public class UI {
 			break;
 		}
 
+		// se pide el número de documento
 		System.out.print("Ingrese el número de documento: ");
 
-		String numeroDeDocumento = sc.next();
+		numeroDeDocumento = sc.next();
 
+		// se pide el número de teléfono
 		System.out.print("Ingrese el teléfono de contacto: ");
 
-		String numeroDeTelefono = sc.next();
+		numeroDeTelefono = sc.next();
 
+		// se pide la dirección del cliente
 		System.out.print("Ingrese la dirección del cliente: ");
 
-		String direccion = sc.next();
+		direccion = sc.next();
 
+		// se pide el email del cliente
 		System.out.println("Ingrese el e-mail del cliente");
 
-		String email = sc.next();
+		email = sc.next();
 
+		// se crea el objeto cliente con toda la información recopilada
 		cliente = new Cliente(primerNombre, segundoNombre, primerApellido,
 				segundoApellido, docType, numeroDeDocumento, numeroDeTelefono,
 				direccion, email);
 
-		// pedir info de la reserva
+		/*
+		 * Sección de datos de la reserva
+		 */
+		System.out.println("INFORMACIÓN DE LA RESERVA");
 
+		// se pide la fecha de la reserva
+		System.out.print("Ingrese el día de la reserva (DD/MM/AAAA): ");
+
+		String fecha = sc.next();
+
+		StringTokenizer st = new StringTokenizer(fecha, "/");
+
+		int dia = Integer.parseInt(st.nextToken());
+		int mes = Integer.parseInt(st.nextToken());
+		int year = Integer.parseInt(st.nextToken());
+
+		// se pide la hora inicial de la reserva
+		System.out.print("Ingrese la hora inicial ('HH/MM', ej. 14:00): ");
+
+		String horaInicial = sc.next();
+
+		StringTokenizer stHora = new StringTokenizer(horaInicial, "/");
+
+		int horas = Integer.parseInt(st.nextToken());
+		int minutos = Integer.parseInt(st.nextToken());
+
+		// se pide la hora final de la reserva
+		System.out.print("Ingrese la hora final ('HH/MM', ej. 14:00): ");
+
+		String horaFinal = sc.next();
+
+		StringTokenizer stHoraFinal = new StringTokenizer(horaFinal, "/");
+
+		int horasFinal = Integer.parseInt(st.nextToken());
+		int minutosFinal = Integer.parseInt(st.nextToken());
+		
+		// se pide la forma de pago usada
+		System.out.println("Ingrese la forma de pago:");
+		System.out.println("1. Tarjeta de Crédito");
+		System.out.println("2. Débito");
+		System.out.println("3. Cheque");
+		System.out.println("4. Bonos");
+		
+		
 	}
 }
