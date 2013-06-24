@@ -1,5 +1,6 @@
 package co.edu.poli.politecfutbol.entidades;
 import java.util.Date;
+import java.util.GregorianCalendar;
 
 /**
  * Esta clase representa una reserva de una cancha de fútbol. Esta clase se debe
@@ -12,8 +13,8 @@ public class Reserva {
 	/*
 	 * Lista de campos de la clase
 	 */
-	private Date fechaHoraDeInicio;
-	private Date fechaHoraDeFin;
+	private GregorianCalendar fechaHoraDeInicio;
+	private GregorianCalendar fechaHoraDeFin;
 	private FormaDePago formaDePago; // la forma de pago usada
 	private Cliente cliente; // el cliente que solicita la reserva
 	private String empleado; // el empleado que hace la reserva
@@ -28,7 +29,7 @@ public class Reserva {
 	 * @param empleado El empleado que realizó la reserva.
 	 * @param cancha La cancha que se está reservando.
 	 */
-	public Reserva(Date fechaHoraDeInicio, Date fechaHoraDeFin,
+	public Reserva(GregorianCalendar fechaHoraDeInicio, GregorianCalendar fechaHoraDeFin,
 			FormaDePago formaDePago, Cliente cliente, String empleado,
 			Cancha cancha) {
 		super();
@@ -43,10 +44,10 @@ public class Reserva {
 	/*
 	 * Getters & Setters
 	 */
-	public Date getFechaHoraDeInicio() {
+	public GregorianCalendar getFechaHoraDeInicio() {
 		return fechaHoraDeInicio;
 	}
-	public Date getFechaHoraDeFin() {
+	public GregorianCalendar getFechaHoraDeFin() {
 		return fechaHoraDeFin;
 	}
 	public FormaDePago getFormaDePago() {
