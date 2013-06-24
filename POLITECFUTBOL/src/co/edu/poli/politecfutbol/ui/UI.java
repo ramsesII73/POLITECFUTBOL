@@ -9,6 +9,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Properties;
 import java.util.Scanner;
@@ -186,15 +187,6 @@ public class UI {
 					+ "Primer Nombre: "
 					+ r.getCliente().getPrimerNombre()
 					+ "\n"
-					+ "Cancha: "
-					+ r.getCancha().getNombre()
-					+ "\n"
-					+ "Sede: "
-					+ r.getCancha().getSede().getNombre()
-					+ "\n"
-					+ "Ciudad: "
-					+ r.getCancha().getSede().getCiudad().getNombre()
-					+ "\n"
 					+ "Inicio: "
 					+ DateFormat.getDateTimeInstance().format(
 							r.getFechaHoraDeInicio().getTime())
@@ -202,6 +194,12 @@ public class UI {
 					+ "Fin: "
 					+ DateFormat.getDateTimeInstance().format(
 							r.getFechaHoraDeFin().getTime()));
+			for (Cancha c : r.getCanchas()) {
+				System.out.println("\tCancha: " + c.getNombre());
+				System.out.println("\tSede: " + c.getSede().getNombre());
+				System.out.println("\tCiudad: "
+						+ c.getSede().getCiudad().getNombre());
+			}
 		}
 	}
 
@@ -394,8 +392,6 @@ public class UI {
 
 			// se pide la información de la cancha o canchas a reservar
 
-			Cancha cancha = null;
-
 			System.out
 					.println("Elija las canchas que quiere reservar (EJ: 1,3,5):");
 			int contador = 1;
@@ -408,61 +404,76 @@ public class UI {
 
 			StringTokenizer st = new StringTokenizer(sc.nextLine(), ",");
 
-			// hacer una lista de los indices de las canchas elejidas
+			// hacer una lista de canchas escogidas
 
-			ArrayList<Integer> indicesCanchas = new ArrayList<Integer>();
-			ArrayList<Cancha> canchasAReservar;
+			ArrayList<Cancha> canchasEscogidas = new ArrayList<Cancha>();
 
-			// iterar por la lista de canchas elegida
-			
-			for (Integer i : indicesCanchas) {
-				canchasAReservar.add(canchas.get(i));				
-				
-				// se pide la fecha de la reserva
-				System.out.print("Ingrese el día de la reserva (DD/MM/AAAA): ");
-
-				String fecha = sc.next();
-				sc.nextLine();
-
-				StringTokenizer st = new StringTokenizer(fecha, "/");
-
-				int dia = Integer.parseInt(st.nextToken());
-				int mes = Integer.parseInt(st.nextToken());
-				int year = Integer.parseInt(st.nextToken());
-
-				// se pide la hora inicial de la reserva
-				System.out.print("Ingrese la hora inicial ('HH:MM', ej. 14:00): ");
-
-				String horaInicial = sc.next();
-				sc.nextLine();
-
-				StringTokenizer stHora = new StringTokenizer(horaInicial, ":");
-
-				int horas = Integer.parseInt(stHora.nextToken());
-				int minutos = Integer.parseInt(stHora.nextToken());
-
-				// se crea el fecha hora inicial
-				GregorianCalendar fechaHoraInicial = new GregorianCalendar(year,
-						mes, dia, horas, minutos);
-
-				// se pide la hora final de la reserva
-				System.out.print("Ingrese la hora final ('HH/MM', ej. 14:00): ");
-
-				String horaFinal = sc.next();
-				sc.nextLine();
-
-				StringTokenizer stHoraFinal = new StringTokenizer(horaFinal, ":");
-
-				int horasFinal = Integer.parseInt(stHoraFinal.nextToken());
-				int minutosFinal = Integer.parseInt(stHoraFinal.nextToken());
-
-				// se crea el fecha hora final
-
-				GregorianCalendar fechaHoraFinal = new GregorianCalendar(year, mes,
-						dia, horasFinal, minutosFinal);
+			while (st.hasMoreTokens()) {
+				canchasEscogidas.add(canchas.get(Integer.parseInt(st
+						.nextToken())));
 			}
-			
-			
+
+			// se pide la fecha de la reserva
+			System.out.print("Ingrese el día de la reserva (DD/MM/AAAA): ");
+
+			String fecha = sc.next();
+			sc.nextLine();
+
+			st = new StringTokenizer(fecha, "/");
+
+			int dia = Integer.parseInt(st.nextToken());
+			int mes = Integer.parseInt(st.nextToken());
+			int year = Integer.parseInt(st.nextToken());
+
+			// se pide la hora inicial de la reserva
+			System.out.print("Ingrese la hora inicial ('HH:MM', ej. 14:00): ");
+
+			String horaInicial = sc.next();
+			sc.nextLine();
+
+			StringTokenizer stHora = new StringTokenizer(horaInicial, ":");
+
+			int horas = Integer.parseInt(stHora.nextToken());
+			int minutos = Integer.parseInt(stHora.nextToken());
+
+			// se crea el fecha hora inicial
+			GregorianCalendar fechaHoraInicial = new GregorianCalendar(year,
+					mes, dia, horas, minutos);
+
+			// se pide la hora final de la reserva
+			System.out.print("Ingrese la hora final ('HH/MM', ej. 14:00): ");
+
+			String horaFinal = sc.next();
+			sc.nextLine();
+
+			StringTokenizer stHoraFinal = new StringTokenizer(horaFinal, ":");
+
+			int horasFinal = Integer.parseInt(stHoraFinal.nextToken());
+			int minutosFinal = Integer.parseInt(stHoraFinal.nextToken());
+
+			// se crea el fecha hora final
+
+			GregorianCalendar fechaHoraFinal = new GregorianCalendar(year, mes,
+					dia, horasFinal, minutosFinal);
+
+			// se valida que el tiempo de reserva sea mayor o igual a una hora
+			if (fechaHoraFinal.getTimeInMillis()
+					- fechaHoraInicial.getTimeInMillis() < (60 * 60 * 1000)) {
+				System.out
+						.println("Error. El tiempo mínimo de reserva es de una hora.");
+				return;
+			}
+
+			// se calcula el total a pagar
+			boolean pedidoValido = calcularTotal(canchasEscogidas.size(),
+					fechaHoraInicial, fechaHoraFinal);
+
+			if (!pedidoValido) {
+				System.out
+						.println("El pedido presenta conflictos de horario. Por favor intente nuevamente.");
+				System.exit(0);
+			}
+
 			// se pide la forma de pago usada
 			System.out.println("Ingrese la forma de pago:");
 			System.out.println("1. Tarjeta de Crédito");
@@ -492,10 +503,120 @@ public class UI {
 			// se crea el objeto de reserva
 			reservas.add(new Reserva(fechaHoraInicial, fechaHoraFinal,
 					formaDePago, cliente,
-					currentUser.getPrincipal().toString(), cancha));
+					currentUser.getPrincipal().toString(), canchasEscogidas));
 			serializar();
 			System.out.println("La reserva se creó exitosamente");
 		}
+	}
+
+	private boolean calcularTotal(int size, GregorianCalendar fechaHoraInicial,
+			GregorianCalendar fechaHoraFinal) {
+
+		/*
+		 * Primero se valida que el pedido no supere una extensión de más de un
+		 * día puesto que no hay horarios definidos para medianoche
+		 */
+		int diaDeLaSemana;
+		if (fechaHoraInicial.get(Calendar.DAY_OF_WEEK) != fechaHoraFinal
+				.get(Calendar.DAY_OF_WEEK)) {
+			return false;
+		} else {
+			diaDeLaSemana = fechaHoraInicial.get(Calendar.DAY_OF_WEEK);
+		}
+
+		/*
+		 * Luego se valida si se trata de un día feriado
+		 */
+		// TODO
+
+		/*
+		 * Luego se valida la lógica del cálculo del total a pagar dependiendo
+		 * del día de la semana
+		 */
+		int horaInicial = fechaHoraInicial.get(Calendar.HOUR_OF_DAY);
+		int horaFinal = fechaHoraFinal.get(Calendar.HOUR_OF_DAY);
+
+		/*
+		 * Luego se valida que la hora inicial sea menor a la final
+		 */
+		if (horaInicial > horaFinal) {
+			return false;
+		}
+
+		/*
+		 * Variables para contabilizar el tiempo incurrido en cada tarifa
+		 */
+		long minutosTarifa1 = 0;
+		long minutosTarifa2 = 0;
+		long minutosTarifa3 = 0;
+		long minutosTarifa4 = 0;
+
+		/*
+		 * Variables locales para saber cuanto vale cada tarifa
+		 */
+		int tarifa1 = Integer.parseInt(properties.getProperty("tarifa1"));
+		int tarifa2 = Integer.parseInt(properties.getProperty("tarifa2"));
+		int tarifa3 = Integer.parseInt(properties.getProperty("tarifa3"));
+		int tarifa4 = Integer.parseInt(properties.getProperty("tarifa4"));
+
+		/*
+		 * Variables para saber los límites inferiores de cada intervalo de
+		 * tiempo de cada tarifa
+		 */
+		int tarifa1LunesHoraInicial = Integer.parseInt(properties
+				.getProperty("tarifa1LunesHoraInicial"));
+		int tarifa1MVHoraInicial = Integer.parseInt(properties
+				.getProperty("tarifa1MVHoraInicial"));
+		int tarifa2LunesHoraInicial = Integer.parseInt(properties
+				.getProperty("tarifa2LunesHoraInicial"));
+		int tarifa2FinDeSemanaYFestivosHoraInicial = Integer
+				.parseInt(properties
+						.getProperty("tarifa2FinDeSemanaYFestivosHoraInicial"));
+		int tarifa3MVHoraInicial = Integer.parseInt(properties
+				.getProperty("tarifa3MVHoraInicial"));
+		int tarifa4FinDeSemanaYFestivosHoraInicial = Integer
+				.parseInt(properties
+						.getProperty("tarifa4FinDeSemanaYFestivosHoraInicial"));
+
+		switch (diaDeLaSemana) {
+		case Calendar.MONDAY:
+			if (horaInicial < tarifa2LunesHoraInicial) {
+				if (horaFinal < tarifa2LunesHoraInicial) {
+					// hora inicial y final en tarifa 1
+					minutosTarifa1 += (fechaHoraFinal.getTimeInMillis()
+							- fechaHoraInicial.getTimeInMillis()) / 1000;
+				} else if (horaFinal < 23) {
+					// TODO hora inicial en tarifa 1 y hora final en tarifa 2
+					
+				} else {
+					return false; // en caso de que la hora final sea luego de
+									// 11
+				}
+			} else if (horaInicial < 23) {
+				if (horaFinal < 23) {
+					// TODO hora inicial y final en tarifa 2
+				} else {
+					return false; // hora final mayor a 11 PM
+				}
+			} else {
+				return false; // en caso de que la hora incial sea después de
+								// las 11
+			}
+			break;
+		case Calendar.TUESDAY:
+		case Calendar.WEDNESDAY:
+		case Calendar.THURSDAY:
+		case Calendar.FRIDAY:
+
+			break;
+		case Calendar.SATURDAY:
+			break;
+		case Calendar.SUNDAY:
+			break;
+		default:
+			break;
+		}
+
 	}
 
 	private void crearSede() {

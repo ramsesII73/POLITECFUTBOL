@@ -1,6 +1,6 @@
 package co.edu.poli.politecfutbol.entidades;
 import java.io.Serializable;
-import java.util.Date;
+import java.util.ArrayList;
 import java.util.GregorianCalendar;
 
 /**
@@ -20,7 +20,7 @@ public class Reserva implements Serializable {
 	private FormaDePago formaDePago; // la forma de pago usada
 	private Cliente cliente; // el cliente que solicita la reserva
 	private String empleado; // el empleado que hace la reserva
-	private Cancha cancha; // la cancha que se está reservando
+	private ArrayList<Cancha> canchas; // la cancha que se está reservando
 	
 	/**
 	 * Constructor de la clase
@@ -29,18 +29,18 @@ public class Reserva implements Serializable {
 	 * @param formaDePago La forma de pago usada al momento de hacer la reserva.
 	 * @param cliente El ciente que solicitó la reserva.
 	 * @param empleado El empleado que realizó la reserva.
-	 * @param cancha La cancha que se está reservando.
+	 * @param canchasEscogidas La cancha que se está reservando.
 	 */
 	public Reserva(GregorianCalendar fechaHoraDeInicio, GregorianCalendar fechaHoraDeFin,
 			FormaDePago formaDePago, Cliente cliente, String empleado,
-			Cancha cancha) {
+			ArrayList<Cancha> canchasEscogidas) {
 		super();
 		this.fechaHoraDeInicio = fechaHoraDeInicio;
 		this.fechaHoraDeFin = fechaHoraDeFin;
 		this.formaDePago = formaDePago;
 		this.cliente = cliente;
 		this.empleado = empleado;
-		this.cancha = cancha;
+		this.canchas = canchasEscogidas;
 	}
 	
 	/*
@@ -61,7 +61,7 @@ public class Reserva implements Serializable {
 	public String getEmpleado() {
 		return empleado;
 	}
-	public Cancha getCancha() {
-		return cancha;
+	public ArrayList<Cancha> getCanchas() {
+		return canchas;
 	}
 }

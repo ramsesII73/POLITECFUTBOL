@@ -8,6 +8,7 @@ import java.io.Serializable;
  *
  */
 public class EmpleadoBase implements Serializable {
+	private static final long serialVersionUID = 1L;
 	/*
 	 * Lista de campos de la clase
 	 */

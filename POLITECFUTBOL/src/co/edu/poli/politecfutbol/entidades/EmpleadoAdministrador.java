@@ -6,6 +6,7 @@ package co.edu.poli.politecfutbol.entidades;
  *
  */
 public class EmpleadoAdministrador extends EmpleadoBase {
+	private static final long serialVersionUID = 1L;
 
 	/**
 	 * Constructor de la clase 
