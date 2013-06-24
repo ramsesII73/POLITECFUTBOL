@@ -2,6 +2,7 @@ package co.edu.poli.politecfutbol.ui;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
@@ -74,7 +75,12 @@ public class UI {
 
 		login();
 
-		System.exit(0);
+		mostrarMenu();
+	}
+
+	private void mostrarMenu() {
+		// TODO Auto-generated method stub
+		
 	}
 
 	private void montarShiro() {
@@ -87,9 +93,11 @@ public class UI {
 	private void cargarParametrosDelSistema() {
 		// cargar archivo de propiedades
 		properties = new Properties();
-		try (FileInputStream fis = new FileInputStream(
-				"/src/properties/systemparameters.properties")) {
+		try (FileInputStream fis = new FileInputStream("src/properties/systemparameters.properties")) {
 			properties.load(fis);
+		} catch(FileNotFoundException fnfe) {
+			System.out.println("No se econtró el archivo de parámetros del sistema");
+			System.exit(0);
 		} catch (IOException ioe) {
 			System.out
 					.println("Error al cargar el archivo de parámetros del sistema");
@@ -225,8 +233,27 @@ public class UI {
 	private void serializar(ArrayList<Cancha> canchas2,
 			ArrayList<Ciudad> ciudades2, ArrayList<Cliente> clientes2,
 			ArrayList<Reserva> reservas2, ArrayList<Sede> sedes2) {
-		try (ObjectOutputStream oos = new ObjectOutputStream(FileOutputStream fos = new FileOutputStream())) {
-			
+		try (ObjectOutputStream oosCanchas = new ObjectOutputStream(
+				new FileOutputStream(properties.getProperty("rutaCanchas")));
+				ObjectOutputStream oosCiudades = new ObjectOutputStream(
+						new FileOutputStream(
+								properties.getProperty("rutaCiudades")));
+				ObjectOutputStream oosClientes = new ObjectOutputStream(
+						new FileOutputStream(
+								properties.getProperty("rutaClientes")));
+				ObjectOutputStream oosSedes = new ObjectOutputStream(
+						new FileOutputStream(
+								properties.getProperty("rutaReservas")));
+				ObjectOutputStream oosReservas = new ObjectOutputStream(
+						new FileOutputStream(
+								properties.getProperty("rutaSedes")))) {
+			oosCanchas.writeObject(canchas2);
+			oosCiudades.writeObject(ciudades2);
+			oosClientes.writeObject(clientes2);
+			oosReservas.writeObject(reservas2);
+			oosSedes.writeObject(sedes2);
+		} catch (IOException ioe) {
+			System.out.println("Error al salvar los datos");
 		}
 	}
 
