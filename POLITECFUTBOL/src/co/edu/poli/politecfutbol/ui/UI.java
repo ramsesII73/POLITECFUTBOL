@@ -136,11 +136,22 @@ public class UI {
 			case 11:
 				eliminarCiudad();
 				break;
+			case 0:
+				mostrarTipos();
+				break;
 			case 99:
 				System.out.println("El programa se cerrará ahora. Adios");
 				System.exit(0);
 			}
 		}
+	}
+
+	private void mostrarTipos() {
+		System.out.println("Ciudades: " + ciudades);
+		System.out.println("Sedes: " + sedes);
+		System.out.println("Canchas: " + canchas);
+		System.out.println("Reservas: " + reservas);
+		System.out.println("Clientes: " + clientes);
 	}
 
 	private void eliminarCiudad() {
@@ -264,12 +275,6 @@ public class UI {
 	}
 
 	private void consultarReserva() {
-		System.out.println(canchas);
-		System.out.println(reservas);
-		System.out.println(sedes);
-		System.out.println(clientes);
-		System.out.println(ciudades);
-		
 		System.out
 				.println("Este es el listado de reservas registradas en el sistema:");
 		System.out.println("Apellido" + "\t" + "Nombre" + "\t" + "Cancha"
@@ -445,10 +450,10 @@ public class UI {
 								properties.getProperty("rutaClientes")));
 				ObjectOutputStream oosSedes = new ObjectOutputStream(
 						new FileOutputStream(
-								properties.getProperty("rutaReservas")));
+								properties.getProperty("rutaSedes")));
 				ObjectOutputStream oosReservas = new ObjectOutputStream(
 						new FileOutputStream(
-								properties.getProperty("rutaSedes")))) {
+								properties.getProperty("rutaReservas")))) {
 			oosCanchas.writeObject(canchas);
 			oosCiudades.writeObject(ciudades);
 			oosClientes.writeObject(clientes);
@@ -647,6 +652,8 @@ public class UI {
 			cliente = new Cliente(primerNombre, segundoNombre, primerApellido,
 					segundoApellido, docType, numeroDeDocumento,
 					numeroDeTelefono, direccion, email);
+			
+			clientes.add(cliente);
 
 			/*
 			 * Sección de datos de la reserva

@@ -11,6 +11,7 @@ import java.util.GregorianCalendar;
  * 
  */
 public class Reserva implements Serializable {
+	private static final long serialVersionUID = 1L;
 	/*
 	 * Lista de campos de la clase
 	 */
