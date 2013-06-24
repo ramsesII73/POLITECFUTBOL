@@ -264,12 +264,20 @@ public class UI {
 	}
 
 	private void consultarReserva() {
+		System.out.println(canchas);
+		System.out.println(reservas);
+		System.out.println(sedes);
+		System.out.println(clientes);
+		System.out.println(ciudades);
+		
 		System.out
 				.println("Este es el listado de reservas registradas en el sistema:");
-		for (Reserva r : reservas) {
-			System.out.println(r.getCliente().getPrimerApellido() + " "
-					+ r.getCliente().getPrimerNombre() + " "
-					+ r.getCancha().getNombre());
+		System.out.println("Apellido" + "\t" + "Nombre" + "\t" + "Cancha"
+				+ "\t" + "Sede" + "\t" + "Ciudad" + "\t" + "Inicio" + "\t"
+				+ "Fin");
+		for (int i = 0; i < reservas.size(); i++) {
+			System.out.println(reservas.get(i));
+					
 		}
 	}
 
