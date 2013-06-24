@@ -30,7 +30,6 @@ import org.slf4j.LoggerFactory;
 import co.edu.poli.politecfutbol.entidades.Cancha;
 import co.edu.poli.politecfutbol.entidades.Ciudad;
 import co.edu.poli.politecfutbol.entidades.Cliente;
-import co.edu.poli.politecfutbol.entidades.EmpleadoBase;
 import co.edu.poli.politecfutbol.entidades.FormaDePago;
 import co.edu.poli.politecfutbol.entidades.Reserva;
 import co.edu.poli.politecfutbol.entidades.Sede;
@@ -280,16 +279,12 @@ public class UI {
 		System.out.println("La ciudad se ha creado exitosamente");
 	}
 
-	public void crearReserva() {
+	private void crearReserva() {
 		/*
 		 * Variables locales necesarias para realizar la reserva
 		 */
 		Cliente cliente;
 		FormaDePago formaDePago = null;
-		Cancha[] canchasAReservar;
-		Ciudad ciudad;
-		EmpleadoBase empleado;
-
 		String primerNombre;
 		String segundoNombre;
 		String primerApellido;
@@ -397,71 +392,77 @@ public class UI {
 			 */
 			System.out.println("INFORMACIÓN DE LA RESERVA");
 
-			// se pide la información de la cancha
+			// se pide la información de la cancha o canchas a reservar
 
 			Cancha cancha = null;
 
-			if (canchas.size() > 0) {
-				System.out.println("Elija una cancha:");
-				int contador = 1;
-				for (Cancha c : canchas) {
-					System.out.println(contador + ". " + c.getNombre());
-				}
-				System.out.print("Elija una opción [1-" + canchas.size()
-						+ "]: ");
-
-				int opcion = sc.nextInt();
-
-				cancha = canchas.get(opcion - 1);
-			} else {
-				System.out
-						.println("No se han ingresado canchas al sistema. Adios");
-				System.exit(0);
+			System.out
+					.println("Elija las canchas que quiere reservar (EJ: 1,3,5):");
+			int contador = 1;
+			for (Cancha c : canchas) {
+				System.out.println(contador + ". " + c.getNombre());
 			}
+			System.out
+					.print("Escriba las opciones que desea elejir separadas por coma ',' [1-"
+							+ canchas.size() + "]: ");
 
-			// se pide la fecha de la reserva
-			System.out.print("Ingrese el día de la reserva (DD/MM/AAAA): ");
+			StringTokenizer st = new StringTokenizer(sc.nextLine(), ",");
 
-			String fecha = sc.next();
-			sc.nextLine();
+			// hacer una lista de los indices de las canchas elejidas
 
-			StringTokenizer st = new StringTokenizer(fecha, "/");
+			ArrayList<Integer> indicesCanchas = new ArrayList<Integer>();
+			ArrayList<Cancha> canchasAReservar;
 
-			int dia = Integer.parseInt(st.nextToken());
-			int mes = Integer.parseInt(st.nextToken());
-			int year = Integer.parseInt(st.nextToken());
+			// iterar por la lista de canchas elegida
+			
+			for (Integer i : indicesCanchas) {
+				canchasAReservar.add(canchas.get(i));				
+				
+				// se pide la fecha de la reserva
+				System.out.print("Ingrese el día de la reserva (DD/MM/AAAA): ");
 
-			// se pide la hora inicial de la reserva
-			System.out.print("Ingrese la hora inicial ('HH:MM', ej. 14:00): ");
+				String fecha = sc.next();
+				sc.nextLine();
 
-			String horaInicial = sc.next();
-			sc.nextLine();
+				StringTokenizer st = new StringTokenizer(fecha, "/");
 
-			StringTokenizer stHora = new StringTokenizer(horaInicial, ":");
+				int dia = Integer.parseInt(st.nextToken());
+				int mes = Integer.parseInt(st.nextToken());
+				int year = Integer.parseInt(st.nextToken());
 
-			int horas = Integer.parseInt(stHora.nextToken());
-			int minutos = Integer.parseInt(stHora.nextToken());
+				// se pide la hora inicial de la reserva
+				System.out.print("Ingrese la hora inicial ('HH:MM', ej. 14:00): ");
 
-			// se crea el fecha hora inicial
-			GregorianCalendar fechaHoraInicial = new GregorianCalendar(year,
-					mes, dia, horas, minutos);
+				String horaInicial = sc.next();
+				sc.nextLine();
 
-			// se pide la hora final de la reserva
-			System.out.print("Ingrese la hora final ('HH/MM', ej. 14:00): ");
+				StringTokenizer stHora = new StringTokenizer(horaInicial, ":");
 
-			String horaFinal = sc.next();
-			sc.nextLine();
+				int horas = Integer.parseInt(stHora.nextToken());
+				int minutos = Integer.parseInt(stHora.nextToken());
 
-			StringTokenizer stHoraFinal = new StringTokenizer(horaFinal, ":");
+				// se crea el fecha hora inicial
+				GregorianCalendar fechaHoraInicial = new GregorianCalendar(year,
+						mes, dia, horas, minutos);
 
-			int horasFinal = Integer.parseInt(stHoraFinal.nextToken());
-			int minutosFinal = Integer.parseInt(stHoraFinal.nextToken());
+				// se pide la hora final de la reserva
+				System.out.print("Ingrese la hora final ('HH/MM', ej. 14:00): ");
 
-			// se crea el fecha hora final
+				String horaFinal = sc.next();
+				sc.nextLine();
 
-			GregorianCalendar fechaHoraFinal = new GregorianCalendar(year, mes,
-					dia, horasFinal, minutosFinal);
+				StringTokenizer stHoraFinal = new StringTokenizer(horaFinal, ":");
 
+				int horasFinal = Integer.parseInt(stHoraFinal.nextToken());
+				int minutosFinal = Integer.parseInt(stHoraFinal.nextToken());
+
+				// se crea el fecha hora final
+
+				GregorianCalendar fechaHoraFinal = new GregorianCalendar(year, mes,
+						dia, horasFinal, minutosFinal);
+			}
+			
+			
 			// se pide la forma de pago usada
 			System.out.println("Ingrese la forma de pago:");
 			System.out.println("1. Tarjeta de Crédito");
@@ -832,20 +833,93 @@ public class UI {
 			 * exitosamente
 			 */
 			System.out.println("La cancha fue editada correctamente");
-			
+
 			// guardar los cambios
 			serializar();
 		}
 	}
 
 	private void modificarCiudad() {
-		// TODO Auto-generated method stub
+		// chquear si hay ciudades en el sistema
+		if (ciudades.size() == 0) {
+			System.out.println("Aún no se han agregado ciudades al sistema.");
+			return;
+		} else {
+			// pedir al usuario que elija la ciudad que se desea modificar
+			System.out
+					.println("Estas son las ciudades registradas en el sistema:");
+			for (int i = 0; i < ciudades.size(); i++) {
+				System.out
+						.println((i + 1) + ". " + ciudades.get(i).getNombre());
+			}
+			System.out.print("Elija una opción [1-" + ciudades.size() + "]: ");
 
+			int opcionElejida = sc.nextInt();
+			sc.nextLine();
+
+			/*
+			 * pedir los datos que sean modificables (en este caso sólo el
+			 * nombre)
+			 */
+			System.out.print("Ingrese el nuevo nombre de la ciudad: ");
+
+			String nuevoNombre = sc.nextLine();
+
+			// modificar la ciudad
+			ciudades.get(opcionElejida - 1).setNombre(nuevoNombre);
+
+			/*
+			 * mostrar mensaje de confirmación de que se hizo el cambio
+			 * exitosamente
+			 */
+			System.out.println("La ciudad fue editada correctamente");
+
+			// guardar los cambios
+			serializar();
+		}
 	}
 
 	private void modificarSede() {
-		// TODO Auto-generated method stub
+		// chquear si hay sedes en el sistema
+		if (sedes.size() == 0) {
+			System.out.println("Aún no se han agregado sedes al sistema.");
+			return;
+		} else {
+			// pedir al usuario que elija la sede que se desea modificar
+			System.out
+					.println("Estas son las sedes registradas en el sistema:");
+			for (int i = 0; i < sedes.size(); i++) {
+				System.out.println((i + 1) + ". " + sedes.get(i).getNombre());
+			}
+			System.out.print("Elija una opción [1-" + sedes.size() + "]: ");
 
+			int opcionElejida = sc.nextInt();
+			sc.nextLine();
+
+			/*
+			 * pedir los datos que sean modificables (nombre y dirección)
+			 */
+			System.out.print("Ingrese el nuevo nombre de la sede: ");
+
+			String nuevoNombre = sc.nextLine();
+
+			System.out.print("Ingrese la nueva dirección de la sede: ");
+
+			String nuevaDireccion = sc.nextLine();
+
+			// modificar la sede
+			sedes.get(opcionElejida - 1).setNombre(nuevoNombre);
+			sedes.get(opcionElejida - 1).setDireccion(nuevaDireccion);
+
+			/*
+			 * mostrar mensaje de confirmación de que se hizo el cambio
+			 * exitosamente
+			 */
+			System.out.println("La sede fue editada correctamente");
+
+			// guardar los cambios
+			serializar();
+		}
 	}
 
 	private void montarShiro() {
@@ -853,6 +927,19 @@ public class UI {
 				"classpath:resources/shiro.ini");
 		SecurityManager securityManager = factory.getInstance();
 		SecurityUtils.setSecurityManager(securityManager);
+	}
+
+	private void mostrarInfraestructura() {
+		for (Ciudad c : ciudades) {
+			System.out.println("Ciudad: " + c.getNombre());
+			for (Sede s : sedes) {
+				System.out.println("\tSede: " + s.getNombre() + "("
+						+ s.getDireccion() + ")");
+				for (Cancha ch : canchas) {
+					System.out.println("\tCancha: " + ch.getNombre());
+				}
+			}
+		}
 	}
 
 	private void mostrarLogo() {
@@ -878,18 +965,26 @@ public class UI {
 
 		while (!salir) {
 			System.out.println("Elija una opción:");
+
 			System.out.println("1. Realizar reserva");
 			System.out.println("2. Consultar reserva");
+
 			System.out.println("3. Crear cancha");
 			System.out.println("4. Modificar cancha");
 			System.out.println("5. Eliminar cancha");
+
 			System.out.println("6. Crear sede");
 			System.out.println("7. Modificar sede");
 			System.out.println("8. Eliminar sede");
+
 			System.out.println("9. Crear ciudad");
 			System.out.println("10. Modificar ciudad");
 			System.out.println("11. Eliminar ciudad");
+
+			System.out.println("12. Ver Infraestructura");
+
 			System.out.println("99. Salir del sistema");
+
 			System.out.print("Ingrese una opción [1-12]: ");
 
 			int opcion = sc.nextInt();
@@ -928,6 +1023,9 @@ public class UI {
 				break;
 			case 11:
 				eliminarCiudad();
+				break;
+			case 12:
+				mostrarInfraestructura();
 				break;
 			case 99:
 				System.out.println("El programa se cerrará ahora. Adios");
