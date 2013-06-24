@@ -142,8 +142,44 @@ public class UI {
 	}
 
 	private void crearSede() {
-		// TODO Auto-generated method stub
+		Ciudad ciudad;
+		String nombre;
+		String direccion;
 
+		// primero se chequea si ya hay ciudades en el sistema
+		if (ciudades.size() == 0) {
+			System.out
+					.println("Aún no se han añaido ciudades al sistema. Adios");
+			System.exit(0);
+		} else {
+			// se pide el nombre de la sede
+			System.out.print("Ingrese el nombre de la sede: ");
+
+			nombre = sc.next();
+
+			// se pide la ciudad en la que está ubicada la sede
+			System.out
+					.println("Ingrese la ciudad en la que está ubicada la sede:");
+			int contador = 1;
+			for (Ciudad c : ciudades) {
+				System.out.println(contador + ". " + c.getNombre());
+			}
+			System.out.print("Elija una opción [1-" + ciudades.size() + "]: ");
+
+			int opcion = sc.nextInt();
+
+			ciudad = ciudades.get(opcion - 1);
+			
+			// se pide la dirección de la sede
+			System.out.print("Ingrese la dirección de la sede: ");
+			
+			direccion = sc.nextLine();
+		
+			// se crea la sede
+
+			sedes.add(new Sede(nombre, direccion, ciudad));
+			System.out.println("Se creó la cancha exitosamente");
+		}
 	}
 
 	private void eliminarCancha() {
@@ -152,8 +188,39 @@ public class UI {
 	}
 
 	private void crearCancha() {
-		// TODO Auto-generated method stub
+		String nombreDeCancha;
+		Sede sede;
 
+		System.out.println("Bienvenido al sistema de creación de Canchas");
+
+		if (sedes.size() < 1) {
+			System.out
+					.println("Aún no se han ingresado sedes al sistema. Adios");
+			System.exit(0);
+		} else {
+			// se pide el nombre de la cancha
+			System.out.print("Ingrese el nombre de la cancha: ");
+
+			nombreDeCancha = sc.next();
+
+			// se pide la sede en la que está ubicada la cancha
+			System.out
+					.println("Ingrese la sede en la que está ubicada la cancha:");
+			int contador = 1;
+			for (Sede s : sedes) {
+				System.out.println(contador + ". " + s.getNombre());
+			}
+			System.out.print("Elija una opción [1-" + sedes.size() + "]: ");
+
+			int opcion = sc.nextInt();
+
+			sede = sedes.get(opcion - 1);
+
+			// se crea la cancha
+
+			canchas.add(new Cancha(nombreDeCancha, sede));
+			System.out.println("Se creó la cancha exitosamente");
+		}
 	}
 
 	private void consultarReserva() {

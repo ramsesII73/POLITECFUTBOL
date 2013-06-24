@@ -1,4 +1,7 @@
 package co.edu.poli.politecfutbol.entidades;
+
+import java.util.ArrayList;
+
 /**
  * Esta clase encapsula el concepto de una ciudad
  * @author apaternina
@@ -10,17 +13,16 @@ public class Ciudad {
 	 * Lista de campos de la clase
 	 */
 	private String nombre;
-	private Sede[] sedes; // las sedes ubicadas en esta ciudad
+	private ArrayList<Sede> sedes; // las sedes ubicadas en esta ciudad
 	
 	/**
 	 * Constructor de la clase
 	 * @param nombre El nombre de la ciudad.
-	 * @param sedes	La lista de sedes ubicadas en esta ciudad.
 	 */
-	public Ciudad(String nombre, Sede[] sedes) {
+	public Ciudad(String nombre) {
 		super();
 		this.nombre = nombre;
-		this.sedes = sedes;
+		this.sedes = new ArrayList<Sede>();
 	}
 
 	/*
@@ -34,11 +36,11 @@ public class Ciudad {
 		this.nombre = nombre;
 	}
 
-	public Sede[] getSedes() {
+	public ArrayList<Sede> getSedes() {
 		return sedes;
 	}
 
-	public void setSedes(Sede[] sedes) {
-		this.sedes = sedes;
+	public void setSedes(Sede sede) {
+		this.sedes.add(sede);
 	}
 }

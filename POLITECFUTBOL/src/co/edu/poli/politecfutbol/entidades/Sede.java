@@ -1,4 +1,7 @@
 package co.edu.poli.politecfutbol.entidades;
+
+import java.util.ArrayList;
+
 /**
  * Esta clase encapsula el concepto de una sede
  * @author apaternina
@@ -11,7 +14,7 @@ public class Sede {
 	 */
 	private String nombre;
 	private String direccion;
-	private Cancha[] canchas; // la lista de canchas ubicadas en esta sede
+	private ArrayList<Cancha> canchas; // la lista de canchas ubicadas en esta sede
 	private Ciudad ciudad; // la ciudad en la que está ubicada esta sede
 	
 	/**
@@ -19,13 +22,12 @@ public class Sede {
 	 * 
 	 * @param nombre	El nombre de la sede.
 	 * @param direccion La dirección de la sede.
-	 * @param canchas	Las canchas ubicadas en la sede.
 	 * @param ciudad	La ciudad en la que está ubicada la sede.
 	 */
-	public Sede(String nombre, String direccion, Cancha[] canchas, Ciudad ciudad) {
+	public Sede(String nombre, String direccion, Ciudad ciudad) {
 		this.nombre = nombre;
 		this.direccion = direccion;
-		this.canchas = canchas;
+		this.canchas = new ArrayList<Cancha>();
 		this.ciudad = ciudad;
 	}
 
@@ -48,12 +50,12 @@ public class Sede {
 		this.direccion = direccion;
 	}
 
-	public Cancha[] getCanchas() {
+	public ArrayList<Cancha> getCanchas() {
 		return canchas;
 	}
 
-	public void setCanchas(Cancha[] canchas) {
-		this.canchas = canchas;
+	public void addCancha(Cancha cancha) {
+		this.canchas.add(cancha);
 	}
 
 	public Ciudad getCiudad() {
