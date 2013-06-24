@@ -1,10 +1,13 @@
 package co.edu.poli.politecfutbol.entidades;
+
+import java.io.Serializable;
+
 /**
  * Esta clase representa un empleado base, es decir, un empleado con privilegios mínimos
  * @author apaternina
  *
  */
-public class EmpleadoBase {
+public class EmpleadoBase implements Serializable {
 	/*
 	 * Lista de campos de la clase
 	 */

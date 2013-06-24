@@ -1,10 +1,13 @@
 package co.edu.poli.politecfutbol.entidades;
+
+import java.io.Serializable;
+
 /**
  * Esta clase represent a un cliente de la compañía
  * @author apaternina
  *
  */
-public class Cliente {
+public class Cliente implements Serializable {
 	/*
 	 * Campos de la clase
 	 */

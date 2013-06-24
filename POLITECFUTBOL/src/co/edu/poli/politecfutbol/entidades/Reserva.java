@@ -1,4 +1,5 @@
 package co.edu.poli.politecfutbol.entidades;
+import java.io.Serializable;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
@@ -9,7 +10,7 @@ import java.util.GregorianCalendar;
  * @author apaternina
  * 
  */
-public class Reserva {
+public class Reserva implements Serializable {
 	/*
 	 * Lista de campos de la clase
 	 */

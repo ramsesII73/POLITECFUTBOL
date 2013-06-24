@@ -1,11 +1,15 @@
 package co.edu.poli.politecfutbol.entidades;
+
+import java.io.Serializable;
+
 /**
  * Esta clase encapsula el concepto de una cancha de fútbol
  * 
  * @author apaternina
  *
  */
-public class Cancha {
+public class Cancha implements Serializable {
+	private static final long serialVersionUID = 1L;
 	/*
 	 * Lista de campos
 	 */

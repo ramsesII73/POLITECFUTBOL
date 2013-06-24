@@ -1,5 +1,6 @@
 package co.edu.poli.politecfutbol.entidades;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
@@ -7,8 +8,8 @@ import java.util.ArrayList;
  * @author apaternina
  *
  */
-public class Sede {
-
+public class Sede implements Serializable {
+	private static final long serialVersionUID = 1L;
 	/*
 	 * Lista de campos de la clase
 	 */

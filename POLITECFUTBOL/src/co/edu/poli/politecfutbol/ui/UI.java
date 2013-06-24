@@ -8,7 +8,6 @@ import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Properties;
 import java.util.Scanner;
@@ -94,10 +93,14 @@ public class UI {
 			System.out.println("6. Crear sede");
 			System.out.println("7. Modificar sede");
 			System.out.println("8. Eliminar sede");
-			System.out.println("9. Salir del sistema");
-			System.out.print("Ingrese una opción [1-9]: ");
+			System.out.println("9. Crear ciudad");
+			System.out.println("10. Modificar ciudad");
+			System.out.println("11. Eliminar ciudad");
+			System.out.println("99. Salir del sistema");
+			System.out.print("Ingrese una opción [1-12]: ");
 
 			int opcion = sc.nextInt();
+			sc.nextLine();
 
 			switch (opcion) {
 			case 1:
@@ -125,10 +128,43 @@ public class UI {
 				eliminarSede();
 				break;
 			case 9:
+				crearCiudad();
+				break;
+			case 10:
+				modificarCiudad();
+				break;
+			case 11:
+				eliminarCiudad();
+				break;
+			case 99:
 				System.out.println("El programa se cerrará ahora. Adios");
 				System.exit(0);
 			}
 		}
+	}
+
+	private void eliminarCiudad() {
+		// TODO Auto-generated method stub
+
+	}
+
+	private void modificarCiudad() {
+		// TODO Auto-generated method stub
+
+	}
+
+	private void crearCiudad() {
+		String nombre;
+
+		// se pide el nombre de la ciudad
+		System.out.print("Ingrese el nombre de la ciudad: ");
+
+		nombre = sc.next();
+
+		// se crea la ciudad
+		ciudades.add(new Ciudad(nombre));
+		serializar();
+		System.out.println("La ciudad se ha creado exitosamente");
 	}
 
 	private void eliminarSede() {
@@ -155,7 +191,7 @@ public class UI {
 			// se pide el nombre de la sede
 			System.out.print("Ingrese el nombre de la sede: ");
 
-			nombre = sc.next();
+			nombre = sc.nextLine();
 
 			// se pide la ciudad en la que está ubicada la sede
 			System.out
@@ -167,18 +203,20 @@ public class UI {
 			System.out.print("Elija una opción [1-" + ciudades.size() + "]: ");
 
 			int opcion = sc.nextInt();
+			sc.nextLine();
 
 			ciudad = ciudades.get(opcion - 1);
-			
+
 			// se pide la dirección de la sede
 			System.out.print("Ingrese la dirección de la sede: ");
-			
+
 			direccion = sc.nextLine();
-		
+
 			// se crea la sede
 
 			sedes.add(new Sede(nombre, direccion, ciudad));
-			System.out.println("Se creó la cancha exitosamente");
+			serializar();
+			System.out.println("Se creó la sede exitosamente");
 		}
 	}
 
@@ -201,7 +239,7 @@ public class UI {
 			// se pide el nombre de la cancha
 			System.out.print("Ingrese el nombre de la cancha: ");
 
-			nombreDeCancha = sc.next();
+			nombreDeCancha = sc.nextLine();
 
 			// se pide la sede en la que está ubicada la cancha
 			System.out
@@ -213,19 +251,26 @@ public class UI {
 			System.out.print("Elija una opción [1-" + sedes.size() + "]: ");
 
 			int opcion = sc.nextInt();
+			sc.nextLine();
 
 			sede = sedes.get(opcion - 1);
 
 			// se crea la cancha
 
 			canchas.add(new Cancha(nombreDeCancha, sede));
+			serializar();
 			System.out.println("Se creó la cancha exitosamente");
 		}
 	}
 
 	private void consultarReserva() {
-		// TODO Auto-generated method stub
-
+		System.out
+				.println("Este es el listado de reservas registradas en el sistema:");
+		for (Reserva r : reservas) {
+			System.out.println(r.getCliente().getPrimerApellido() + " "
+					+ r.getCliente().getPrimerNombre() + " "
+					+ r.getCancha().getNombre());
+		}
 	}
 
 	private void montarShiro() {
@@ -309,10 +354,11 @@ public class UI {
 			 * En caso de que ocurra un error de IO diferente a que los archivos
 			 * no existan.
 			 */
+			ioe.printStackTrace();
 			System.out
 					.println("Ocurrió un error desconocido al leer la base de datos.");
 			System.out
-					.println("¿Desea crear una nueva base de datos? (nota: se perderán todos los datos salvados previamente");
+					.println("¿Desea crear una nueva base de datos? (nota: se perderán todos los datos salvados previamente)");
 			System.out.print("Elija una opción [s/n]: ");
 
 			String opcion = sc.next();
@@ -362,7 +408,7 @@ public class UI {
 		/*
 		 * Se llama al método de serialización
 		 */
-		serializar(canchas, ciudades, clientes, reservas, sedes);
+		serializar();
 	}
 
 	/**
@@ -380,9 +426,7 @@ public class UI {
 	 * @param sedes2
 	 *            El listado de sedes.
 	 */
-	private void serializar(ArrayList<Cancha> canchas2,
-			ArrayList<Ciudad> ciudades2, ArrayList<Cliente> clientes2,
-			ArrayList<Reserva> reservas2, ArrayList<Sede> sedes2) {
+	private void serializar() {
 		try (ObjectOutputStream oosCanchas = new ObjectOutputStream(
 				new FileOutputStream(properties.getProperty("rutaCanchas")));
 				ObjectOutputStream oosCiudades = new ObjectOutputStream(
@@ -397,11 +441,12 @@ public class UI {
 				ObjectOutputStream oosReservas = new ObjectOutputStream(
 						new FileOutputStream(
 								properties.getProperty("rutaSedes")))) {
-			oosCanchas.writeObject(canchas2);
-			oosCiudades.writeObject(ciudades2);
-			oosClientes.writeObject(clientes2);
-			oosReservas.writeObject(reservas2);
-			oosSedes.writeObject(sedes2);
+			oosCanchas.writeObject(canchas);
+			oosCiudades.writeObject(ciudades);
+			oosClientes.writeObject(clientes);
+			oosReservas.writeObject(reservas);
+			oosSedes.writeObject(sedes);
+			System.out.println("Se guardó la información exitosamente");
 		} catch (IOException ioe) {
 			System.out.println("Error al salvar los datos");
 		}
@@ -418,13 +463,11 @@ public class UI {
 		System.out.println("Bienvenido\n");
 		System.out.print("Usuario: ");
 
-		usuario = sc.next();
-		sc.nextLine();
+		usuario = sc.nextLine();
 
 		System.out.print("Contraseña: ");
 
-		password = sc.next();
-		sc.nextLine();
+		password = sc.nextLine();
 
 		// let's login the current user so we can check against roles and
 		// permissions:
@@ -437,14 +480,17 @@ public class UI {
 			} catch (UnknownAccountException uae) {
 				log.info("No existe un usuario con el nombre de usuario "
 						+ token.getPrincipal());
+				System.exit(0);
 			} catch (IncorrectCredentialsException ice) {
 				log.info("La contraseña para la cuenta " + token.getPrincipal()
 						+ " es incorrecta!");
+				System.exit(0);
 			} catch (LockedAccountException lae) {
 				log.info("La cuenta del usuario "
 						+ token.getPrincipal()
 						+ " está bloqueada.  "
 						+ "Por favor contacte al administrador para desbloquearla.");
+				System.exit(0);
 			}
 			// ... catch more exceptions here (maybe custom ones specific to
 			// your application?
@@ -480,7 +526,7 @@ public class UI {
 			}
 
 			// all done - log out!
-			currentUser.logout();
+			// currentUser.logout();
 		}
 	}
 
@@ -504,185 +550,198 @@ public class UI {
 		String direccion;
 		String email;
 
-		/*
-		 * Sección de datos del Cliente
-		 */
-		System.out.println("Información del Cliente");
-
-		// se pide el primer nombre
-		System.out.print("Ingrese el primer nombre del cliente: ");
-
-		primerNombre = sc.next();
-		sc.nextLine();
-
-		// se pide el segundo nombre
-		System.out.print("Ingrese el segundo nombre del cliente: ");
-
-		segundoNombre = sc.next();
-		sc.nextLine();
-
-		System.out.print("Ingrese el primer apellido del cliente: ");
-
-		// se pide el primer apellido
-		primerApellido = sc.next();
-		sc.nextLine();
-
-		System.out.print("Ingrese el segundo apellido del cliente: ");
-
-		// se pide el segundo apellido
-		segundoApellido = sc.next();
-		sc.nextLine();
-
-		// se pide el tipo de documento de identificación
-		System.out.println("Ingrese el tipo de documento de identificación: ");
-		System.out.println("1. Cédula");
-		System.out.println("2. NIT");
-		System.out.println("3. Pasaporte");
-		System.out.print("Elija una opción [1-3]: ");
-
-		int tipoDeDocumento = sc.nextInt();
-		docType = null;
-
-		switch (tipoDeDocumento) {
-		case 1:
-			docType = TipoDeDocumento.CC;
-			break;
-		case 2:
-			docType = TipoDeDocumento.NIT;
-			break;
-		case 3:
-			docType = TipoDeDocumento.Pasaporte;
-			break;
-		default:
-			System.out.println("Ha ingresado una opción inválida.");
-			return;
-		}
-
-		// se pide el número de documento
-		System.out.print("Ingrese el número de documento: ");
-
-		numeroDeDocumento = sc.next();
-		sc.nextLine();
-
-		// se pide el número de teléfono
-		System.out.print("Ingrese el teléfono de contacto: ");
-
-		numeroDeTelefono = sc.next();
-		sc.nextLine();
-
-		// se pide la dirección del cliente
-		System.out.print("Ingrese la dirección del cliente: ");
-
-		direccion = sc.next();
-		sc.nextLine();
-
-		// se pide el email del cliente
-		System.out.print("Ingrese el e-mail del cliente: ");
-
-		email = sc.next();
-		sc.nextLine();
-
-		// se crea el objeto cliente con toda la información recopilada
-		cliente = new Cliente(primerNombre, segundoNombre, primerApellido,
-				segundoApellido, docType, numeroDeDocumento, numeroDeTelefono,
-				direccion, email);
-
-		/*
-		 * Sección de datos de la reserva
-		 */
-		System.out.println("INFORMACIÓN DE LA RESERVA");
-
-		// se pide la información de la cancha
-
-		Cancha cancha = null;
-
-		if (canchas.size() > 0) {
-			System.out.println("Elija una cancha:");
-			int contador = 1;
-			for (Cancha c : canchas) {
-				System.out.println(contador + ". " + c.getNombre());
-			}
-			System.out.print("Elija una opción [1-" + canchas.size() + "]: ");
-
-			int opcion = sc.nextInt();
-
-			cancha = canchas.get(opcion - 1);
-		} else {
-			System.out.println("No se han ingresado canchas al sistema. Adios");
+		if (canchas.size() == 0) {
+			System.out
+					.println("Aún no se han creado canchas en el sistema. Adios");
 			System.exit(0);
+		} else {
+
+			/*
+			 * Sección de datos del Cliente
+			 */
+			System.out.println("Información del Cliente");
+
+			// se pide el primer nombre
+			System.out.print("Ingrese el primer nombre del cliente: ");
+
+			primerNombre = sc.next();
+			sc.nextLine();
+
+			// se pide el segundo nombre
+			System.out.print("Ingrese el segundo nombre del cliente: ");
+
+			segundoNombre = sc.next();
+			sc.nextLine();
+
+			System.out.print("Ingrese el primer apellido del cliente: ");
+
+			// se pide el primer apellido
+			primerApellido = sc.next();
+			sc.nextLine();
+
+			System.out.print("Ingrese el segundo apellido del cliente: ");
+
+			// se pide el segundo apellido
+			segundoApellido = sc.next();
+			sc.nextLine();
+
+			// se pide el tipo de documento de identificación
+			System.out
+					.println("Ingrese el tipo de documento de identificación: ");
+			System.out.println("1. Cédula");
+			System.out.println("2. NIT");
+			System.out.println("3. Pasaporte");
+			System.out.print("Elija una opción [1-3]: ");
+
+			int tipoDeDocumento = sc.nextInt();
+			docType = null;
+
+			switch (tipoDeDocumento) {
+			case 1:
+				docType = TipoDeDocumento.CC;
+				break;
+			case 2:
+				docType = TipoDeDocumento.NIT;
+				break;
+			case 3:
+				docType = TipoDeDocumento.Pasaporte;
+				break;
+			default:
+				System.out.println("Ha ingresado una opción inválida.");
+				return;
+			}
+
+			// se pide el número de documento
+			System.out.print("Ingrese el número de documento: ");
+
+			numeroDeDocumento = sc.next();
+			sc.nextLine();
+
+			// se pide el número de teléfono
+			System.out.print("Ingrese el teléfono de contacto: ");
+
+			numeroDeTelefono = sc.next();
+			sc.nextLine();
+
+			// se pide la dirección del cliente
+			System.out.print("Ingrese la dirección del cliente: ");
+
+			direccion = sc.next();
+			sc.nextLine();
+
+			// se pide el email del cliente
+			System.out.print("Ingrese el e-mail del cliente: ");
+
+			email = sc.next();
+			sc.nextLine();
+
+			// se crea el objeto cliente con toda la información recopilada
+			cliente = new Cliente(primerNombre, segundoNombre, primerApellido,
+					segundoApellido, docType, numeroDeDocumento,
+					numeroDeTelefono, direccion, email);
+
+			/*
+			 * Sección de datos de la reserva
+			 */
+			System.out.println("INFORMACIÓN DE LA RESERVA");
+
+			// se pide la información de la cancha
+
+			Cancha cancha = null;
+
+			if (canchas.size() > 0) {
+				System.out.println("Elija una cancha:");
+				int contador = 1;
+				for (Cancha c : canchas) {
+					System.out.println(contador + ". " + c.getNombre());
+				}
+				System.out.print("Elija una opción [1-" + canchas.size()
+						+ "]: ");
+
+				int opcion = sc.nextInt();
+
+				cancha = canchas.get(opcion - 1);
+			} else {
+				System.out
+						.println("No se han ingresado canchas al sistema. Adios");
+				System.exit(0);
+			}
+
+			// se pide la fecha de la reserva
+			System.out.print("Ingrese el día de la reserva (DD/MM/AAAA): ");
+
+			String fecha = sc.next();
+			sc.nextLine();
+
+			StringTokenizer st = new StringTokenizer(fecha, "/");
+
+			int dia = Integer.parseInt(st.nextToken());
+			int mes = Integer.parseInt(st.nextToken());
+			int year = Integer.parseInt(st.nextToken());
+
+			// se pide la hora inicial de la reserva
+			System.out.print("Ingrese la hora inicial ('HH:MM', ej. 14:00): ");
+
+			String horaInicial = sc.next();
+			sc.nextLine();
+
+			StringTokenizer stHora = new StringTokenizer(horaInicial, ":");
+
+			int horas = Integer.parseInt(stHora.nextToken());
+			int minutos = Integer.parseInt(stHora.nextToken());
+
+			// se crea el fecha hora inicial
+			GregorianCalendar fechaHoraInicial = new GregorianCalendar(year,
+					mes, dia, horas, minutos);
+
+			// se pide la hora final de la reserva
+			System.out.print("Ingrese la hora final ('HH/MM', ej. 14:00): ");
+
+			String horaFinal = sc.next();
+			sc.nextLine();
+
+			StringTokenizer stHoraFinal = new StringTokenizer(horaFinal, ":");
+
+			int horasFinal = Integer.parseInt(stHoraFinal.nextToken());
+			int minutosFinal = Integer.parseInt(stHoraFinal.nextToken());
+
+			// se crea el fecha hora final
+
+			GregorianCalendar fechaHoraFinal = new GregorianCalendar(year, mes,
+					dia, horasFinal, minutosFinal);
+
+			// se pide la forma de pago usada
+			System.out.println("Ingrese la forma de pago:");
+			System.out.println("1. Tarjeta de Crédito");
+			System.out.println("2. Débito");
+			System.out.println("3. Cheque");
+			System.out.println("4. Bonos");
+			System.out.print("Elija una opción [1-4]: ");
+
+			int opcionDePago = sc.nextInt();
+
+			switch (opcionDePago) {
+			case 1:
+				formaDePago = FormaDePago.TarjetaDeCredito;
+				break;
+			case 2:
+				formaDePago = FormaDePago.Debito;
+				break;
+			case 3:
+				formaDePago = FormaDePago.Cheque;
+				break;
+			case 4:
+				formaDePago = FormaDePago.Bonos;
+			default:
+				System.out.println("Forma de Pago inválida");
+			}
+
+			// se crea el objeto de reserva
+			reservas.add(new Reserva(fechaHoraInicial, fechaHoraFinal,
+					formaDePago, cliente,
+					currentUser.getPrincipal().toString(), cancha));
+			serializar();
+			System.out.println("La reserva se creó exitosamente");
 		}
-
-		// se pide la fecha de la reserva
-		System.out.print("Ingrese el día de la reserva (DD/MM/AAAA): ");
-
-		String fecha = sc.next();
-		sc.nextLine();
-
-		StringTokenizer st = new StringTokenizer(fecha, "/");
-
-		int dia = Integer.parseInt(st.nextToken());
-		int mes = Integer.parseInt(st.nextToken());
-		int year = Integer.parseInt(st.nextToken());
-
-		// se pide la hora inicial de la reserva
-		System.out.print("Ingrese la hora inicial ('HH:MM', ej. 14:00): ");
-
-		String horaInicial = sc.next();
-		sc.nextLine();
-
-		StringTokenizer stHora = new StringTokenizer(horaInicial, ":");
-
-		int horas = Integer.parseInt(stHora.nextToken());
-		int minutos = Integer.parseInt(stHora.nextToken());
-
-		// se crea el fecha hora inicial
-		GregorianCalendar fechaHoraInicial = new GregorianCalendar(year, mes,
-				dia, horas, minutos);
-
-		// se pide la hora final de la reserva
-		System.out.print("Ingrese la hora final ('HH/MM', ej. 14:00): ");
-
-		String horaFinal = sc.next();
-		sc.nextLine();
-
-		StringTokenizer stHoraFinal = new StringTokenizer(horaFinal, ":");
-
-		int horasFinal = Integer.parseInt(stHoraFinal.nextToken());
-		int minutosFinal = Integer.parseInt(stHoraFinal.nextToken());
-
-		// se crea el fecha hora final
-
-		GregorianCalendar fechaHoraFinal = new GregorianCalendar(year, mes,
-				dia, horasFinal, minutosFinal);
-
-		// se pide la forma de pago usada
-		System.out.println("Ingrese la forma de pago:");
-		System.out.println("1. Tarjeta de Crédito");
-		System.out.println("2. Débito");
-		System.out.println("3. Cheque");
-		System.out.println("4. Bonos");
-		System.out.print("Elija una opción [1-4]: ");
-
-		int opcionDePago = sc.nextInt();
-
-		switch (opcionDePago) {
-		case 1:
-			formaDePago = FormaDePago.TarjetaDeCredito;
-			break;
-		case 2:
-			formaDePago = FormaDePago.Debito;
-			break;
-		case 3:
-			formaDePago = FormaDePago.Cheque;
-			break;
-		case 4:
-			formaDePago = FormaDePago.Bonos;
-		default:
-			System.out.println("Forma de Pago inválida");
-		}
-
-		// se crea el objeto de reserva
-		reservas.add(new Reserva(fechaHoraInicial, fechaHoraFinal, formaDePago,
-				cliente, currentUser.getPrincipal().toString(), cancha));
 	}
 }
