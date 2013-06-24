@@ -9,7 +9,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.text.DateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Properties;
 import java.util.Scanner;
@@ -48,14 +47,6 @@ public class UI {
 
 	private static final transient Logger log = LoggerFactory
 			.getLogger(UI.class);
-	private Scanner sc;
-	private Properties properties;
-	private ArrayList<Cancha> canchas;
-	private ArrayList<Ciudad> ciudades;
-	private ArrayList<Cliente> clientes;
-	private ArrayList<Reserva> reservas;
-	private ArrayList<Sede> sedes;
-	private Subject currentUser;
 
 	/**
 	 * @param args
@@ -65,6 +56,16 @@ public class UI {
 		new UI();
 
 	}
+
+	private Scanner sc;
+	private Properties properties;
+	private ArrayList<Cancha> canchas;
+	private ArrayList<Ciudad> ciudades;
+	private ArrayList<Cliente> clientes;
+	private ArrayList<Reserva> reservas;
+	private ArrayList<Sede> sedes;
+
+	private Subject currentUser;
 
 	public UI() {
 		sc = new Scanner(System.in);
@@ -80,440 +81,6 @@ public class UI {
 		login();
 
 		mostrarMenu();
-	}
-
-	private void mostrarMenu() {
-		boolean salir = false;
-
-		while (!salir) {
-			System.out.println("Elija una opción:");
-			System.out.println("1. Realizar reserva");
-			System.out.println("2. Consultar reserva");
-			System.out.println("3. Crear cancha");
-			System.out.println("4. Modificar cancha");
-			System.out.println("5. Eliminar cancha");
-			System.out.println("6. Crear sede");
-			System.out.println("7. Modificar sede");
-			System.out.println("8. Eliminar sede");
-			System.out.println("9. Crear ciudad");
-			System.out.println("10. Modificar ciudad");
-			System.out.println("11. Eliminar ciudad");
-			System.out.println("99. Salir del sistema");
-			System.out.print("Ingrese una opción [1-12]: ");
-
-			int opcion = sc.nextInt();
-			sc.nextLine();
-
-			switch (opcion) {
-			case 1:
-				realizarReserva();
-				break;
-			case 2:
-				consultarReserva();
-				break;
-			case 3:
-				crearCancha();
-				break;
-			case 4:
-				crearCancha();
-				break;
-			case 5:
-				eliminarCancha();
-				break;
-			case 6:
-				crearSede();
-				break;
-			case 7:
-				modificarSede();
-				break;
-			case 8:
-				eliminarSede();
-				break;
-			case 9:
-				crearCiudad();
-				break;
-			case 10:
-				modificarCiudad();
-				break;
-			case 11:
-				eliminarCiudad();
-				break;
-			case 0:
-				mostrarTipos();
-				break;
-			case 99:
-				System.out.println("El programa se cerrará ahora. Adios");
-				System.exit(0);
-			}
-		}
-	}
-
-	private void mostrarTipos() {
-		System.out.println("Ciudades: " + ciudades);
-		System.out.println("Sedes: " + sedes);
-		System.out.println("Canchas: " + canchas);
-		System.out.println("Reservas: " + reservas);
-		System.out.println("Clientes: " + clientes);
-	}
-
-	private void eliminarCiudad() {
-		// primero se muestran las ciudades registradas actualmente en el
-		// sistema
-		System.out.println("Estas son las ciudades registradas en el sistema:");
-		for (int i = 0; i < ciudades.size(); i++) {
-			System.out.println((i + 1) + ". " + ciudades.get(i).getNombre());
-		}
-
-		// luego se pregunta cual ciudad se desea elimninar
-		System.out.print("Elija una opción [1-" + ciudades.size() + "]: ");
-
-		int eleccion = sc.nextInt();
-		sc.nextLine();
-
-		// luego se muestra un prompt de confirmación
-		System.out.print("Está seguro de que desea eliminar la ciudad "
-				+ ciudades.get(eleccion - 1).getNombre() + "? [s/n]: ");
-
-		String confirmacion = sc.next();
-
-		switch (confirmacion) {
-		case "s":
-			// se borran todas las canchas de cada sede de la ciudad
-			for (int i = 0; i < sedes.size(); i++) {
-				if (sedes.get(i).getCiudad().getNombre()
-						.equals(ciudades.get(eleccion - 1).getNombre())) {
-					for (int j = 0; j < canchas.size(); j++) {
-						if (canchas.get(j).getSede().getNombre()
-								.equals(sedes.get(i).getNombre())) {
-							canchas.remove(j);
-						}
-					}
-				}
-			}
-			System.out
-					.println("Se eliminaron todas las canchas de cada sede de esta ciudad");
-
-			// se borran todas las sedes de la ciudad
-			for (int i = 0; i < sedes.size(); i++) {
-				if (sedes.get(i).getCiudad().getNombre()
-						.equals(ciudades.get(eleccion - 1).getNombre())) {
-					sedes.remove(i);
-				}
-			}
-
-			System.out
-					.println("Se borraron exitosamente todas las sedes de la ciudad.");
-
-			// se borra la ciudad de la memoria
-			ciudades.remove(eleccion - 1);
-
-			// luego se muestra un mensaje de confirmación
-			System.out.println("La ciudad ha sido borrada exitosamente");
-
-			// se guardan los cambios
-			serializar();
-
-			break;
-		case "n":
-			System.out.println("No se hicieron cambios.");
-			break;
-		default:
-			System.out
-					.println("Ha seleccionado una opción inválida. No se harán cambios. Adios");
-			System.exit(0);
-			break;
-		}
-
-	}
-
-	private void modificarCiudad() {
-		// TODO Auto-generated method stub
-
-	}
-
-	private void crearCiudad() {
-		String nombre;
-
-		// se pide el nombre de la ciudad
-		System.out.print("Ingrese el nombre de la ciudad: ");
-
-		nombre = sc.next();
-
-		// se crea la ciudad
-		ciudades.add(new Ciudad(nombre));
-		serializar();
-		System.out.println("La ciudad se ha creado exitosamente");
-	}
-
-	private void eliminarSede() {
-		// primero se muestran las sedes registradas actualmente en el sistema
-		System.out.println("Estas son las sedes registradas en el sistema:");
-		for (int i = 0; i < sedes.size(); i++) {
-			System.out.println((i + 1) + ". " + sedes.get(i).getNombre());
-		}
-
-		// luego se pregunta cual sede se desea elimninar
-		System.out.print("Elija una opción [1-" + sedes.size() + "]: ");
-
-		int eleccion = sc.nextInt();
-		sc.nextLine();
-
-		// luego se muestra un prompt de confirmación
-		System.out.print("Está seguro de que desea eliminar la sede "
-				+ sedes.get(eleccion - 1).getNombre() + "? [s/n]: ");
-
-		String confirmacion = sc.next();
-
-		switch (confirmacion) {
-		case "s":
-			// se borran todas las canchas de la sede
-			for (int i = 0; i < canchas.size(); i++) {
-				if (canchas.get(i).getSede().getNombre()
-						.equals(sedes.get(eleccion - 1))) {
-					canchas.remove(i);
-				}
-			}
-
-			System.out
-					.println("Se borraron exitosamente todas las canchas de la sede.");
-
-			// se borra la sede de su ciudad
-			if (sedes.get(eleccion - 1).getCiudad()
-					.eliminarSede(sedes.get(eleccion - 1).getNombre())) {
-
-				// se borra la sede de la memoria
-				sedes.remove(eleccion - 1);
-
-				// luego se muestra un mensaje de confirmación
-				System.out.println("La sede ha sido borrada exitosamente");
-
-				// se guardan los cambios
-				serializar();
-			} else {
-				System.out.println("Ocurrió un error al borrar la sede.");
-			}
-			break;
-		case "n":
-			System.out.println("No se hicieron cambios.");
-			break;
-		default:
-			System.out
-					.println("Ha seleccionado una opción inválida. No se harán cambios. Adios");
-			System.exit(0);
-			break;
-		}
-	}
-
-	private void modificarSede() {
-		// TODO Auto-generated method stub
-
-	}
-
-	private void crearSede() {
-		Ciudad ciudad;
-		String nombre;
-		String direccion;
-
-		// primero se chequea si ya hay ciudades en el sistema
-		if (ciudades.size() == 0) {
-			System.out
-					.println("Aún no se han añaido ciudades al sistema. Adios");
-			System.exit(0);
-		} else {
-			// se pide el nombre de la sede
-			System.out.print("Ingrese el nombre de la sede: ");
-
-			nombre = sc.nextLine();
-
-			// se pide la ciudad en la que está ubicada la sede
-			System.out
-					.println("Ingrese la ciudad en la que está ubicada la sede:");
-			int contador = 1;
-			for (Ciudad c : ciudades) {
-				System.out.println(contador + ". " + c.getNombre());
-			}
-			System.out.print("Elija una opción [1-" + ciudades.size() + "]: ");
-
-			int opcion = sc.nextInt();
-			sc.nextLine();
-
-			ciudad = ciudades.get(opcion - 1);
-
-			// se pide la dirección de la sede
-			System.out.print("Ingrese la dirección de la sede: ");
-
-			direccion = sc.nextLine();
-
-			// se crea la sede
-			Sede sede = new Sede(nombre, direccion, ciudad);
-			sedes.add(sede);
-
-			// se añade la referencia de la sede en la ciuadad
-			ciudad.addSede(sede);
-
-			serializar();
-			System.out.println("Se creó la sede exitosamente");
-		}
-	}
-
-	private void eliminarCancha() {
-		// primero se muestran las canchas registradas actualmente en el sistema
-		System.out.println("Estas son las canchas registradas en el sistema:");
-		for (int i = 0; i < canchas.size(); i++) {
-			System.out.println((i + 1) + ". " + canchas.get(i).getNombre());
-		}
-
-		// luego se pregunta cual cancha se desea elimninar
-		System.out.print("Elija una opción [1-" + canchas.size() + "]: ");
-
-		int eleccion = sc.nextInt();
-		sc.nextLine();
-
-		// luego se muestra un prompt de confirmación
-		System.out.print("Está seguro de que desea eliminar la cancha "
-				+ canchas.get(eleccion - 1).getNombre() + "? [s/n]: ");
-
-		String confirmacion = sc.next();
-
-		switch (confirmacion) {
-		case "s":
-			// se borra la cancha de su sede
-			if (canchas.get(eleccion - 1).getSede()
-					.eliminarCancha(canchas.get(eleccion - 1).getNombre())) {
-
-				// se borra la cancha de la memoria
-				canchas.remove(eleccion - 1);
-
-				// luego se muestra un mensaje de confirmación
-				System.out.println("La cancha ha sido borrada exitosamente");
-
-				// se guardan los cambios
-				serializar();
-			} else {
-				System.out.println("Ocurrió un error al borrar la cancha.");
-			}
-			break;
-		case "n":
-			System.out.println("No se hicieron cambios.");
-			break;
-		default:
-			System.out
-					.println("Ha seleccionado una opción inválida. No se harán cambios. Adios");
-			System.exit(0);
-			break;
-		}
-	}
-
-	private void crearCancha() {
-		String nombreDeCancha;
-		Sede sede;
-
-		System.out.println("Bienvenido al sistema de creación de Canchas");
-
-		if (sedes.size() < 1) {
-			System.out
-					.println("Aún no se han ingresado sedes al sistema. Adios");
-			System.exit(0);
-		} else {
-			// se pide el nombre de la cancha
-			System.out.print("Ingrese el nombre de la cancha: ");
-
-			nombreDeCancha = sc.nextLine();
-
-			// se pide la sede en la que está ubicada la cancha
-			System.out
-					.println("Ingrese la sede en la que está ubicada la cancha:");
-			int contador = 1;
-			for (Sede s : sedes) {
-				System.out.println(contador + ". " + s.getNombre());
-			}
-			System.out.print("Elija una opción [1-" + sedes.size() + "]: ");
-
-			int opcion = sc.nextInt();
-			sc.nextLine();
-
-			sede = sedes.get(opcion - 1);
-
-			// se crea la cancha
-			Cancha cancha = new Cancha(nombreDeCancha, sede);
-			canchas.add(cancha);
-
-			// se guarda la referencia de la cancha en la sede
-			sede.addCancha(cancha);
-			serializar();
-			System.out.println("Se creó la cancha exitosamente");
-		}
-	}
-
-	private void consultarReserva() {
-		System.out
-				.println("Este es el listado de reservas registradas en el sistema:");
-		for (Reserva r : reservas) {
-			System.out.println("Primer Apellido: "
-					+ r.getCliente().getPrimerApellido()
-					+ "\n"
-					+ "Primer Nombre: "
-					+ r.getCliente().getPrimerNombre()
-					+ "\n"
-					+ "Cancha: "
-					+ r.getCancha().getNombre()
-					+ "\n"
-					+ "Sede: "
-					+ r.getCancha().getSede().getNombre()
-					+ "\n"
-					+ "Ciudad: "
-					+ r.getCancha().getSede().getCiudad().getNombre()
-					+ "\n"
-					+ "Inicio: "
-					+ DateFormat.getDateTimeInstance().format(
-							r.getFechaHoraDeInicio().getTime())
-					+ "\n"
-					+ "Fin: "
-					+ DateFormat.getDateTimeInstance().format(
-							r.getFechaHoraDeFin().getTime()));
-		}
-	}
-
-	private void montarShiro() {
-		Factory<SecurityManager> factory = new IniSecurityManagerFactory(
-				"classpath:resources/shiro.ini");
-		SecurityManager securityManager = factory.getInstance();
-		SecurityUtils.setSecurityManager(securityManager);
-	}
-
-	private void cargarParametrosDelSistema() {
-		// cargar archivo de propiedades
-		properties = new Properties();
-		try (FileInputStream fis = new FileInputStream(
-				"src/properties/systemparameters.properties")) {
-			properties.load(fis);
-		} catch (FileNotFoundException fnfe) {
-			System.out
-					.println("No se econtró el archivo de parámetros del sistema");
-			System.exit(0);
-		} catch (IOException ioe) {
-			System.out
-					.println("Error al cargar el archivo de parámetros del sistema");
-			System.exit(0);
-		}
-	}
-
-	private void mostrarLogo() {
-		// mostrar pantalla de inicio
-		try (InputStreamReader isr = new InputStreamReader(new FileInputStream(
-				"logo-sistema.txt"), "UTF-8")) {
-			int caracter = isr.read();
-			while (caracter != -1) {
-				System.out.print((char) caracter);
-				caracter = isr.read();
-			}
-
-			System.out.println("\n\n");
-		} catch (FileNotFoundException e) {
-			System.out.println("POLITECFUTBOL");
-		} catch (IOException ioe) {
-			System.out.println("POLITECFUTBOL");
-		}
 	}
 
 	/**
@@ -593,6 +160,52 @@ public class UI {
 		}
 	}
 
+	private void cargarParametrosDelSistema() {
+		// cargar archivo de propiedades
+		properties = new Properties();
+		try (FileInputStream fis = new FileInputStream(
+				"src/properties/systemparameters.properties")) {
+			properties.load(fis);
+		} catch (FileNotFoundException fnfe) {
+			System.out
+					.println("No se econtró el archivo de parámetros del sistema");
+			System.exit(0);
+		} catch (IOException ioe) {
+			System.out
+					.println("Error al cargar el archivo de parámetros del sistema");
+			System.exit(0);
+		}
+	}
+
+	private void consultarReserva() {
+		System.out
+				.println("Este es el listado de reservas registradas en el sistema:");
+		for (Reserva r : reservas) {
+			System.out.println("Primer Apellido: "
+					+ r.getCliente().getPrimerApellido()
+					+ "\n"
+					+ "Primer Nombre: "
+					+ r.getCliente().getPrimerNombre()
+					+ "\n"
+					+ "Cancha: "
+					+ r.getCancha().getNombre()
+					+ "\n"
+					+ "Sede: "
+					+ r.getCancha().getSede().getNombre()
+					+ "\n"
+					+ "Ciudad: "
+					+ r.getCancha().getSede().getCiudad().getNombre()
+					+ "\n"
+					+ "Inicio: "
+					+ DateFormat.getDateTimeInstance().format(
+							r.getFechaHoraDeInicio().getTime())
+					+ "\n"
+					+ "Fin: "
+					+ DateFormat.getDateTimeInstance().format(
+							r.getFechaHoraDeFin().getTime()));
+		}
+	}
+
 	/**
 	 * Este método crea la base de datos inicial de la aplicación
 	 */
@@ -612,126 +225,62 @@ public class UI {
 		serializar();
 	}
 
-	/**
-	 * Este método se usa para serializar los objetos que hacen parte de la base
-	 * de datos de la aplicación.
-	 * 
-	 * @param canchas2
-	 *            El listado de canchas.
-	 * @param ciudades2
-	 *            El listado de ciudades.
-	 * @param clientes2
-	 *            El listado de clientes.
-	 * @param reservas2
-	 *            El listado de reservas.
-	 * @param sedes2
-	 *            El listado de sedes.
-	 */
-	private void serializar() {
-		try (ObjectOutputStream oosCanchas = new ObjectOutputStream(
-				new FileOutputStream(properties.getProperty("rutaCanchas")));
-				ObjectOutputStream oosCiudades = new ObjectOutputStream(
-						new FileOutputStream(
-								properties.getProperty("rutaCiudades")));
-				ObjectOutputStream oosClientes = new ObjectOutputStream(
-						new FileOutputStream(
-								properties.getProperty("rutaClientes")));
-				ObjectOutputStream oosSedes = new ObjectOutputStream(
-						new FileOutputStream(
-								properties.getProperty("rutaSedes")));
-				ObjectOutputStream oosReservas = new ObjectOutputStream(
-						new FileOutputStream(
-								properties.getProperty("rutaReservas")))) {
-			oosCanchas.writeObject(canchas);
-			oosCiudades.writeObject(ciudades);
-			oosClientes.writeObject(clientes);
-			oosReservas.writeObject(reservas);
-			oosSedes.writeObject(sedes);
-			System.out.println("Se guardó la información exitosamente");
-		} catch (IOException ioe) {
-			System.out.println("Error al salvar los datos");
+	private void crearCancha() {
+		String nombreDeCancha;
+		Sede sede;
+
+		System.out.println("Bienvenido al sistema de creación de Canchas");
+
+		if (sedes.size() < 1) {
+			System.out
+					.println("Aún no se han ingresado sedes al sistema. Adios");
+			System.exit(0);
+		} else {
+			// se pide el nombre de la cancha
+			System.out.print("Ingrese el nombre de la cancha: ");
+
+			nombreDeCancha = sc.nextLine();
+
+			// se pide la sede en la que está ubicada la cancha
+			System.out
+					.println("Ingrese la sede en la que está ubicada la cancha:");
+			int contador = 1;
+			for (Sede s : sedes) {
+				System.out.println(contador + ". " + s.getNombre());
+			}
+			System.out.print("Elija una opción [1-" + sedes.size() + "]: ");
+
+			int opcion = sc.nextInt();
+			sc.nextLine();
+
+			sede = sedes.get(opcion - 1);
+
+			// se crea la cancha
+			Cancha cancha = new Cancha(nombreDeCancha, sede);
+			canchas.add(cancha);
+
+			// se guarda la referencia de la cancha en la sede
+			sede.addCancha(cancha);
+			serializar();
+			System.out.println("Se creó la cancha exitosamente");
 		}
 	}
 
-	private void login() {
-		String usuario;
-		String password;
+	private void crearCiudad() {
+		String nombre;
 
-		// get the currently executing user:
-		currentUser = SecurityUtils.getSubject();
+		// se pide el nombre de la ciudad
+		System.out.print("Ingrese el nombre de la ciudad: ");
 
-		// pedir usuario y contraseña
-		System.out.println("Bienvenido\n");
-		System.out.print("Usuario: ");
+		nombre = sc.next();
 
-		usuario = sc.nextLine();
-
-		System.out.print("Contraseña: ");
-
-		password = sc.nextLine();
-
-		// let's login the current user so we can check against roles and
-		// permissions:
-		if (!currentUser.isAuthenticated()) {
-			UsernamePasswordToken token = new UsernamePasswordToken(usuario,
-					password);
-			token.setRememberMe(true);
-			try {
-				currentUser.login(token);
-			} catch (UnknownAccountException uae) {
-				log.info("No existe un usuario con el nombre de usuario "
-						+ token.getPrincipal());
-				System.exit(0);
-			} catch (IncorrectCredentialsException ice) {
-				log.info("La contraseña para la cuenta " + token.getPrincipal()
-						+ " es incorrecta!");
-				System.exit(0);
-			} catch (LockedAccountException lae) {
-				log.info("La cuenta del usuario "
-						+ token.getPrincipal()
-						+ " está bloqueada.  "
-						+ "Por favor contacte al administrador para desbloquearla.");
-				System.exit(0);
-			}
-			// ... catch more exceptions here (maybe custom ones specific to
-			// your application?
-			catch (AuthenticationException ae) {
-				// unexpected condition? error?
-			}
-
-			// say who they are:
-			// print their identifying principal (in this case, a username):
-			log.info("Usuario [" + currentUser.getPrincipal()
-					+ "] inició sesión exitosamente.");
-
-			// test a role:
-			if (currentUser.hasRole("schwartz")) {
-				log.info("May the Schwartz be with you!");
-			} else {
-				log.info("Hello, mere mortal.");
-			}
-
-			// test a typed permission (not instance-level)
-			if (currentUser.isPermitted("lightsaber:weild")) {
-				log.info("You may use a lightsaber ring.  Use it wisely.");
-			} else {
-				log.info("Sorry, lightsaber rings are for schwartz masters only.");
-			}
-
-			// a (very powerful) Instance Level permission:
-			if (currentUser.isPermitted("winnebago:drive:eagle5")) {
-				log.info("You are permitted to 'drive' the winnebago with license plate (id) 'eagle5'.  "
-						+ "Here are the keys - have fun!");
-			} else {
-				log.info("Sorry, you aren't allowed to drive the 'eagle5' winnebago!");
-			}
-
-			// all done - log out!
-			// currentUser.logout();
-		}
+		// se crea la ciudad
+		ciudades.add(new Ciudad(nombre));
+		serializar();
+		System.out.println("La ciudad se ha creado exitosamente");
 	}
 
-	public void realizarReserva() {
+	public void crearReserva() {
 		/*
 		 * Variables locales necesarias para realizar la reserva
 		 */
@@ -945,6 +494,486 @@ public class UI {
 					currentUser.getPrincipal().toString(), cancha));
 			serializar();
 			System.out.println("La reserva se creó exitosamente");
+		}
+	}
+
+	private void crearSede() {
+		Ciudad ciudad;
+		String nombre;
+		String direccion;
+
+		// primero se chequea si ya hay ciudades en el sistema
+		if (ciudades.size() == 0) {
+			System.out
+					.println("Aún no se han añaido ciudades al sistema. Adios");
+			System.exit(0);
+		} else {
+			// se pide el nombre de la sede
+			System.out.print("Ingrese el nombre de la sede: ");
+
+			nombre = sc.nextLine();
+
+			// se pide la ciudad en la que está ubicada la sede
+			System.out
+					.println("Ingrese la ciudad en la que está ubicada la sede:");
+			int contador = 1;
+			for (Ciudad c : ciudades) {
+				System.out.println(contador + ". " + c.getNombre());
+			}
+			System.out.print("Elija una opción [1-" + ciudades.size() + "]: ");
+
+			int opcion = sc.nextInt();
+			sc.nextLine();
+
+			ciudad = ciudades.get(opcion - 1);
+
+			// se pide la dirección de la sede
+			System.out.print("Ingrese la dirección de la sede: ");
+
+			direccion = sc.nextLine();
+
+			// se crea la sede
+			Sede sede = new Sede(nombre, direccion, ciudad);
+			sedes.add(sede);
+
+			// se añade la referencia de la sede en la ciuadad
+			ciudad.addSede(sede);
+
+			serializar();
+			System.out.println("Se creó la sede exitosamente");
+		}
+	}
+
+	private void eliminarCancha() {
+		// primero se muestran las canchas registradas actualmente en el sistema
+		System.out.println("Estas son las canchas registradas en el sistema:");
+		for (int i = 0; i < canchas.size(); i++) {
+			System.out.println((i + 1) + ". " + canchas.get(i).getNombre());
+		}
+
+		// luego se pregunta cual cancha se desea elimninar
+		System.out.print("Elija una opción [1-" + canchas.size() + "]: ");
+
+		int eleccion = sc.nextInt();
+		sc.nextLine();
+
+		// luego se muestra un prompt de confirmación
+		System.out.print("Está seguro de que desea eliminar la cancha "
+				+ canchas.get(eleccion - 1).getNombre() + "? [s/n]: ");
+
+		String confirmacion = sc.next();
+
+		switch (confirmacion) {
+		case "s":
+			// se borra la cancha de su sede
+			if (canchas.get(eleccion - 1).getSede()
+					.eliminarCancha(canchas.get(eleccion - 1).getNombre())) {
+
+				// se borra la cancha de la memoria
+				canchas.remove(eleccion - 1);
+
+				// luego se muestra un mensaje de confirmación
+				System.out.println("La cancha ha sido borrada exitosamente");
+
+				// se guardan los cambios
+				serializar();
+			} else {
+				System.out.println("Ocurrió un error al borrar la cancha.");
+			}
+			break;
+		case "n":
+			System.out.println("No se hicieron cambios.");
+			break;
+		default:
+			System.out
+					.println("Ha seleccionado una opción inválida. No se harán cambios. Adios");
+			System.exit(0);
+			break;
+		}
+	}
+
+	private void eliminarCiudad() {
+		// primero se muestran las ciudades registradas actualmente en el
+		// sistema
+		System.out.println("Estas son las ciudades registradas en el sistema:");
+		for (int i = 0; i < ciudades.size(); i++) {
+			System.out.println((i + 1) + ". " + ciudades.get(i).getNombre());
+		}
+
+		// luego se pregunta cual ciudad se desea elimninar
+		System.out.print("Elija una opción [1-" + ciudades.size() + "]: ");
+
+		int eleccion = sc.nextInt();
+		sc.nextLine();
+
+		// luego se muestra un prompt de confirmación
+		System.out.print("Está seguro de que desea eliminar la ciudad "
+				+ ciudades.get(eleccion - 1).getNombre() + "? [s/n]: ");
+
+		String confirmacion = sc.next();
+
+		switch (confirmacion) {
+		case "s":
+			// se borran todas las canchas de cada sede de la ciudad
+			for (int i = 0; i < sedes.size(); i++) {
+				if (sedes.get(i).getCiudad().getNombre()
+						.equals(ciudades.get(eleccion - 1).getNombre())) {
+					for (int j = 0; j < canchas.size(); j++) {
+						if (canchas.get(j).getSede().getNombre()
+								.equals(sedes.get(i).getNombre())) {
+							canchas.remove(j);
+						}
+					}
+				}
+			}
+			System.out
+					.println("Se eliminaron todas las canchas de cada sede de esta ciudad");
+
+			// se borran todas las sedes de la ciudad
+			for (int i = 0; i < sedes.size(); i++) {
+				if (sedes.get(i).getCiudad().getNombre()
+						.equals(ciudades.get(eleccion - 1).getNombre())) {
+					sedes.remove(i);
+				}
+			}
+
+			System.out
+					.println("Se borraron exitosamente todas las sedes de la ciudad.");
+
+			// se borra la ciudad de la memoria
+			ciudades.remove(eleccion - 1);
+
+			// luego se muestra un mensaje de confirmación
+			System.out.println("La ciudad ha sido borrada exitosamente");
+
+			// se guardan los cambios
+			serializar();
+
+			break;
+		case "n":
+			System.out.println("No se hicieron cambios.");
+			break;
+		default:
+			System.out
+					.println("Ha seleccionado una opción inválida. No se harán cambios. Adios");
+			System.exit(0);
+			break;
+		}
+
+	}
+
+	private void eliminarSede() {
+		// primero se muestran las sedes registradas actualmente en el sistema
+		System.out.println("Estas son las sedes registradas en el sistema:");
+		for (int i = 0; i < sedes.size(); i++) {
+			System.out.println((i + 1) + ". " + sedes.get(i).getNombre());
+		}
+
+		// luego se pregunta cual sede se desea elimninar
+		System.out.print("Elija una opción [1-" + sedes.size() + "]: ");
+
+		int eleccion = sc.nextInt();
+		sc.nextLine();
+
+		// luego se muestra un prompt de confirmación
+		System.out.print("Está seguro de que desea eliminar la sede "
+				+ sedes.get(eleccion - 1).getNombre() + "? [s/n]: ");
+
+		String confirmacion = sc.next();
+
+		switch (confirmacion) {
+		case "s":
+			// se borran todas las canchas de la sede
+			for (int i = 0; i < canchas.size(); i++) {
+				if (canchas.get(i).getSede().getNombre()
+						.equals(sedes.get(eleccion - 1))) {
+					canchas.remove(i);
+				}
+			}
+
+			System.out
+					.println("Se borraron exitosamente todas las canchas de la sede.");
+
+			// se borra la sede de su ciudad
+			if (sedes.get(eleccion - 1).getCiudad()
+					.eliminarSede(sedes.get(eleccion - 1).getNombre())) {
+
+				// se borra la sede de la memoria
+				sedes.remove(eleccion - 1);
+
+				// luego se muestra un mensaje de confirmación
+				System.out.println("La sede ha sido borrada exitosamente");
+
+				// se guardan los cambios
+				serializar();
+			} else {
+				System.out.println("Ocurrió un error al borrar la sede.");
+			}
+			break;
+		case "n":
+			System.out.println("No se hicieron cambios.");
+			break;
+		default:
+			System.out
+					.println("Ha seleccionado una opción inválida. No se harán cambios. Adios");
+			System.exit(0);
+			break;
+		}
+	}
+
+	private void login() {
+		String usuario;
+		String password;
+
+		// get the currently executing user:
+		currentUser = SecurityUtils.getSubject();
+
+		// pedir usuario y contraseña
+		System.out.println("Bienvenido\n");
+		System.out.print("Usuario: ");
+
+		usuario = sc.nextLine();
+
+		System.out.print("Contraseña: ");
+
+		password = sc.nextLine();
+
+		// let's login the current user so we can check against roles and
+		// permissions:
+		if (!currentUser.isAuthenticated()) {
+			UsernamePasswordToken token = new UsernamePasswordToken(usuario,
+					password);
+			token.setRememberMe(true);
+			try {
+				currentUser.login(token);
+			} catch (UnknownAccountException uae) {
+				log.info("No existe un usuario con el nombre de usuario "
+						+ token.getPrincipal());
+				System.exit(0);
+			} catch (IncorrectCredentialsException ice) {
+				log.info("La contraseña para la cuenta " + token.getPrincipal()
+						+ " es incorrecta!");
+				System.exit(0);
+			} catch (LockedAccountException lae) {
+				log.info("La cuenta del usuario "
+						+ token.getPrincipal()
+						+ " está bloqueada.  "
+						+ "Por favor contacte al administrador para desbloquearla.");
+				System.exit(0);
+			}
+			// ... catch more exceptions here (maybe custom ones specific to
+			// your application?
+			catch (AuthenticationException ae) {
+				// unexpected condition? error?
+			}
+
+			// say who they are:
+			// print their identifying principal (in this case, a username):
+			log.info("Usuario [" + currentUser.getPrincipal()
+					+ "] inició sesión exitosamente.");
+
+			// test a role:
+			if (currentUser.hasRole("schwartz")) {
+				log.info("May the Schwartz be with you!");
+			} else {
+				log.info("Hello, mere mortal.");
+			}
+
+			// test a typed permission (not instance-level)
+			if (currentUser.isPermitted("lightsaber:weild")) {
+				log.info("You may use a lightsaber ring.  Use it wisely.");
+			} else {
+				log.info("Sorry, lightsaber rings are for schwartz masters only.");
+			}
+
+			// a (very powerful) Instance Level permission:
+			if (currentUser.isPermitted("winnebago:drive:eagle5")) {
+				log.info("You are permitted to 'drive' the winnebago with license plate (id) 'eagle5'.  "
+						+ "Here are the keys - have fun!");
+			} else {
+				log.info("Sorry, you aren't allowed to drive the 'eagle5' winnebago!");
+			}
+
+			// all done - log out!
+			// currentUser.logout();
+		}
+	}
+
+	private void modificarCancha() {
+		// chquear si hay canchas en el sistema
+		if (canchas.size() == 0) {
+			System.out.println("Aún no se han agregado canchas al sistema.");
+			return;
+		} else {
+			// pedir al usuario que elija la cancha que se desea modificar
+			System.out
+					.println("Estas son las canchas registradas en el sistema:");
+			for (int i = 0; i < canchas.size(); i++) {
+				System.out.println((i + 1) + ". " + canchas.get(i).getNombre());
+			}
+			System.out.print("Elija una opción [1-" + canchas.size() + "]: ");
+
+			int opcionElejida = sc.nextInt();
+			sc.nextLine();
+
+			/*
+			 * pedir los datos que sean modificables (en este caso sólo el
+			 * nombre)
+			 */
+			System.out.print("Ingrese el nuevo nombre de la cancha: ");
+
+			String nuevoNombre = sc.nextLine();
+
+			// modificar la cancha
+			canchas.get(opcionElejida - 1).setNombre(nuevoNombre);
+
+			/*
+			 * mostrar mensaje de confirmación de que se hizo el cambio
+			 * exitosamente
+			 */
+			System.out.println("La cancha fue editada correctamente");
+			
+			// guardar los cambios
+			serializar();
+		}
+	}
+
+	private void modificarCiudad() {
+		// TODO Auto-generated method stub
+
+	}
+
+	private void modificarSede() {
+		// TODO Auto-generated method stub
+
+	}
+
+	private void montarShiro() {
+		Factory<SecurityManager> factory = new IniSecurityManagerFactory(
+				"classpath:resources/shiro.ini");
+		SecurityManager securityManager = factory.getInstance();
+		SecurityUtils.setSecurityManager(securityManager);
+	}
+
+	private void mostrarLogo() {
+		// mostrar pantalla de inicio
+		try (InputStreamReader isr = new InputStreamReader(new FileInputStream(
+				"logo-sistema.txt"), "UTF-8")) {
+			int caracter = isr.read();
+			while (caracter != -1) {
+				System.out.print((char) caracter);
+				caracter = isr.read();
+			}
+
+			System.out.println("\n\n");
+		} catch (FileNotFoundException e) {
+			System.out.println("POLITECFUTBOL");
+		} catch (IOException ioe) {
+			System.out.println("POLITECFUTBOL");
+		}
+	}
+
+	private void mostrarMenu() {
+		boolean salir = false;
+
+		while (!salir) {
+			System.out.println("Elija una opción:");
+			System.out.println("1. Realizar reserva");
+			System.out.println("2. Consultar reserva");
+			System.out.println("3. Crear cancha");
+			System.out.println("4. Modificar cancha");
+			System.out.println("5. Eliminar cancha");
+			System.out.println("6. Crear sede");
+			System.out.println("7. Modificar sede");
+			System.out.println("8. Eliminar sede");
+			System.out.println("9. Crear ciudad");
+			System.out.println("10. Modificar ciudad");
+			System.out.println("11. Eliminar ciudad");
+			System.out.println("99. Salir del sistema");
+			System.out.print("Ingrese una opción [1-12]: ");
+
+			int opcion = sc.nextInt();
+			sc.nextLine();
+
+			switch (opcion) {
+			case 1:
+				crearReserva();
+				break;
+			case 2:
+				consultarReserva();
+				break;
+			case 3:
+				crearCancha();
+				break;
+			case 4:
+				modificarCancha();
+				break;
+			case 5:
+				eliminarCancha();
+				break;
+			case 6:
+				crearSede();
+				break;
+			case 7:
+				modificarSede();
+				break;
+			case 8:
+				eliminarSede();
+				break;
+			case 9:
+				crearCiudad();
+				break;
+			case 10:
+				modificarCiudad();
+				break;
+			case 11:
+				eliminarCiudad();
+				break;
+			case 99:
+				System.out.println("El programa se cerrará ahora. Adios");
+				System.exit(0);
+			}
+		}
+	}
+
+	/**
+	 * Este método se usa para serializar los objetos que hacen parte de la base
+	 * de datos de la aplicación.
+	 * 
+	 * @param canchas2
+	 *            El listado de canchas.
+	 * @param ciudades2
+	 *            El listado de ciudades.
+	 * @param clientes2
+	 *            El listado de clientes.
+	 * @param reservas2
+	 *            El listado de reservas.
+	 * @param sedes2
+	 *            El listado de sedes.
+	 */
+	private void serializar() {
+		try (ObjectOutputStream oosCanchas = new ObjectOutputStream(
+				new FileOutputStream(properties.getProperty("rutaCanchas")));
+				ObjectOutputStream oosCiudades = new ObjectOutputStream(
+						new FileOutputStream(
+								properties.getProperty("rutaCiudades")));
+				ObjectOutputStream oosClientes = new ObjectOutputStream(
+						new FileOutputStream(
+								properties.getProperty("rutaClientes")));
+				ObjectOutputStream oosSedes = new ObjectOutputStream(
+						new FileOutputStream(
+								properties.getProperty("rutaSedes")));
+				ObjectOutputStream oosReservas = new ObjectOutputStream(
+						new FileOutputStream(
+								properties.getProperty("rutaReservas")))) {
+			oosCanchas.writeObject(canchas);
+			oosCiudades.writeObject(ciudades);
+			oosClientes.writeObject(clientes);
+			oosReservas.writeObject(reservas);
+			oosSedes.writeObject(sedes);
+			System.out.println("Se guardó la información exitosamente");
+		} catch (IOException ioe) {
+			System.out.println("Error al salvar los datos");
 		}
 	}
 }
