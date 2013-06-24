@@ -580,21 +580,47 @@ public class UI {
 
 		switch (diaDeLaSemana) {
 		case Calendar.MONDAY:
+			// se crea la fecha del limite superior de la tarifa 1
+			GregorianCalendar fechaHoraLimiteSuperior = new GregorianCalendar(
+					fechaHoraInicial.get(Calendar.YEAR),
+					fechaHoraInicial.get(Calendar.MONTH),
+					fechaHoraInicial.get(Calendar.DAY_OF_MONTH),
+					tarifa2LunesHoraInicial, 0);
+
+			// se crea la fecha del limite superior de la tarifa 2
+			GregorianCalendar fechaHoraLimiteSuperiorT2 = new GregorianCalendar(
+					fechaHoraInicial.get(Calendar.YEAR),
+					fechaHoraInicial.get(Calendar.MONTH),
+					fechaHoraInicial.get(Calendar.DAY_OF_MONTH), 23, 0);
+
 			if (horaInicial < tarifa2LunesHoraInicial) {
 				if (horaFinal < tarifa2LunesHoraInicial) {
 					// hora inicial y final en tarifa 1
-					minutosTarifa1 += (fechaHoraFinal.getTimeInMillis()
-							- fechaHoraInicial.getTimeInMillis()) / 1000;
+					minutosTarifa1 += (fechaHoraFinal.getTimeInMillis() - fechaHoraInicial
+							.getTimeInMillis()) / 1000;
 				} else if (horaFinal < 23) {
-					// TODO hora inicial en tarifa 1 y hora final en tarifa 2
-					
+					// hora inicial en tarifa 1 y hora final en tarifa 2
+
+					// se calculan los minutos en tarifa 1
+					minutosTarifa1 += (fechaHoraLimiteSuperior
+							.getTimeInMillis() - fechaHoraInicial
+							.getTimeInMillis()) / 1000;
+
+					// se calculan los minutos en tarifa 2
+					minutosTarifa2 += (fechaHoraLimiteSuperiorT2
+							.getTimeInMillis() - fechaHoraFinal
+							.getTimeInMillis()) / 1000;
 				} else {
 					return false; // en caso de que la hora final sea luego de
 									// 11
 				}
 			} else if (horaInicial < 23) {
 				if (horaFinal < 23) {
-					// TODO hora inicial y final en tarifa 2
+					// hora inicial y final en tarifa 2
+
+					// se calculan los minutos en tarifa 2
+					minutosTarifa2 += (fechaHoraFinal.getTimeInMillis() - fechaHoraFinal
+							.getTimeInMillis()) / 1000;
 				} else {
 					return false; // hora final mayor a 11 PM
 				}
@@ -608,10 +634,51 @@ public class UI {
 		case Calendar.THURSDAY:
 		case Calendar.FRIDAY:
 
+			// se crea la fecha del limite superior de la tarifa 3
+			GregorianCalendar fechaHoraLimiteSuperiorT3 = new GregorianCalendar(
+					fechaHoraInicial.get(Calendar.YEAR),
+					fechaHoraInicial.get(Calendar.MONTH),
+					fechaHoraInicial.get(Calendar.DAY_OF_MONTH), 23, 0);
+			
+			if (horaInicial < tarifa3MVHoraInicial) {
+				if (horaFinal < tarifa3MVHoraInicial) {
+					// hora inicial y final en tarifa 1
+					minutosTarifa1 += (fechaHoraFinal.getTimeInMillis() - fechaHoraInicial
+							.getTimeInMillis()) / 1000;
+				} else if (horaFinal < 23) {
+					// hora inicial en tarifa 1 y hora final en tarifa 3
+
+					// se calculan los minutos en tarifa 1
+					minutosTarifa1 += (fechaHoraLimiteSuperior
+							.getTimeInMillis() - fechaHoraInicial
+							.getTimeInMillis()) / 1000;
+
+					// se calculan los minutos en tarifa 2
+					minutosTarifa3 += (fechaHoraLimiteSuperiorT3
+							.getTimeInMillis() - fechaHoraFinal
+							.getTimeInMillis()) / 1000;
+				} else {
+					return false; // en caso de que la hora final sea luego de
+									// 11
+				}
+			} else if (horaInicial < 23) {
+				if (horaFinal < 23) {
+					// hora inicial y final en tarifa 3
+
+					// se calculan los minutos en tarifa 2
+					minutosTarifa3 += (fechaHoraFinal.getTimeInMillis() - fechaHoraFinal
+							.getTimeInMillis()) / 1000;
+				} else {
+					return false; // hora final mayor a 11 PM
+				}
+			} else {
+				return false; // en caso de que la hora incial sea después de
+								// las 11
+			}
 			break;
 		case Calendar.SATURDAY:
-			break;
 		case Calendar.SUNDAY:
+			
 			break;
 		default:
 			break;
