@@ -31,6 +31,16 @@ public class Sede implements Serializable {
 		this.canchas = new ArrayList<Cancha>();
 		this.ciudad = ciudad;
 	}
+	
+	public boolean eliminarCancha(String nombreDeCancha) {
+		for (int i = 0; i < canchas.size(); i++) {
+			if (canchas.get(i).getNombre().equals(nombreDeCancha)) {
+				canchas.remove(i);
+				return true;
+			}
+		}
+		return false;
+	}
 
 	/*
 	 * Getters & Setters

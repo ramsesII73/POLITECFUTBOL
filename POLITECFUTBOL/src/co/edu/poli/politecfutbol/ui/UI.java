@@ -7,7 +7,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Properties;
 import java.util.Scanner;
@@ -155,7 +157,72 @@ public class UI {
 	}
 
 	private void eliminarCiudad() {
-		// TODO Auto-generated method stub
+		// primero se muestran las ciudades registradas actualmente en el
+		// sistema
+		System.out.println("Estas son las ciudades registradas en el sistema:");
+		for (int i = 0; i < ciudades.size(); i++) {
+			System.out.println((i + 1) + ". " + ciudades.get(i).getNombre());
+		}
+
+		// luego se pregunta cual ciudad se desea elimninar
+		System.out.print("Elija una opción [1-" + ciudades.size() + "]: ");
+
+		int eleccion = sc.nextInt();
+		sc.nextLine();
+
+		// luego se muestra un prompt de confirmación
+		System.out.print("Está seguro de que desea eliminar la ciudad "
+				+ ciudades.get(eleccion - 1).getNombre() + "? [s/n]: ");
+
+		String confirmacion = sc.next();
+
+		switch (confirmacion) {
+		case "s":
+			// se borran todas las canchas de cada sede de la ciudad
+			for (int i = 0; i < sedes.size(); i++) {
+				if (sedes.get(i).getCiudad().getNombre()
+						.equals(ciudades.get(eleccion - 1).getNombre())) {
+					for (int j = 0; j < canchas.size(); j++) {
+						if (canchas.get(j).getSede().getNombre()
+								.equals(sedes.get(i).getNombre())) {
+							canchas.remove(j);
+						}
+					}
+				}
+			}
+			System.out
+					.println("Se eliminaron todas las canchas de cada sede de esta ciudad");
+
+			// se borran todas las sedes de la ciudad
+			for (int i = 0; i < sedes.size(); i++) {
+				if (sedes.get(i).getCiudad().getNombre()
+						.equals(ciudades.get(eleccion - 1).getNombre())) {
+					sedes.remove(i);
+				}
+			}
+
+			System.out
+					.println("Se borraron exitosamente todas las sedes de la ciudad.");
+
+			// se borra la ciudad de la memoria
+			ciudades.remove(eleccion - 1);
+
+			// luego se muestra un mensaje de confirmación
+			System.out.println("La ciudad ha sido borrada exitosamente");
+
+			// se guardan los cambios
+			serializar();
+
+			break;
+		case "n":
+			System.out.println("No se hicieron cambios.");
+			break;
+		default:
+			System.out
+					.println("Ha seleccionado una opción inválida. No se harán cambios. Adios");
+			System.exit(0);
+			break;
+		}
 
 	}
 
@@ -179,8 +246,62 @@ public class UI {
 	}
 
 	private void eliminarSede() {
-		// TODO Auto-generated method stub
+		// primero se muestran las sedes registradas actualmente en el sistema
+		System.out.println("Estas son las sedes registradas en el sistema:");
+		for (int i = 0; i < sedes.size(); i++) {
+			System.out.println((i + 1) + ". " + sedes.get(i).getNombre());
+		}
 
+		// luego se pregunta cual sede se desea elimninar
+		System.out.print("Elija una opción [1-" + sedes.size() + "]: ");
+
+		int eleccion = sc.nextInt();
+		sc.nextLine();
+
+		// luego se muestra un prompt de confirmación
+		System.out.print("Está seguro de que desea eliminar la sede "
+				+ sedes.get(eleccion - 1).getNombre() + "? [s/n]: ");
+
+		String confirmacion = sc.next();
+
+		switch (confirmacion) {
+		case "s":
+			// se borran todas las canchas de la sede
+			for (int i = 0; i < canchas.size(); i++) {
+				if (canchas.get(i).getSede().getNombre()
+						.equals(sedes.get(eleccion - 1))) {
+					canchas.remove(i);
+				}
+			}
+
+			System.out
+					.println("Se borraron exitosamente todas las canchas de la sede.");
+
+			// se borra la sede de su ciudad
+			if (sedes.get(eleccion - 1).getCiudad()
+					.eliminarSede(sedes.get(eleccion - 1).getNombre())) {
+
+				// se borra la sede de la memoria
+				sedes.remove(eleccion - 1);
+
+				// luego se muestra un mensaje de confirmación
+				System.out.println("La sede ha sido borrada exitosamente");
+
+				// se guardan los cambios
+				serializar();
+			} else {
+				System.out.println("Ocurrió un error al borrar la sede.");
+			}
+			break;
+		case "n":
+			System.out.println("No se hicieron cambios.");
+			break;
+		default:
+			System.out
+					.println("Ha seleccionado una opción inválida. No se harán cambios. Adios");
+			System.exit(0);
+			break;
+		}
 	}
 
 	private void modificarSede() {
@@ -224,16 +345,63 @@ public class UI {
 			direccion = sc.nextLine();
 
 			// se crea la sede
+			Sede sede = new Sede(nombre, direccion, ciudad);
+			sedes.add(sede);
 
-			sedes.add(new Sede(nombre, direccion, ciudad));
+			// se añade la referencia de la sede en la ciuadad
+			ciudad.addSede(sede);
+
 			serializar();
 			System.out.println("Se creó la sede exitosamente");
 		}
 	}
 
 	private void eliminarCancha() {
-		// TODO Auto-generated method stub
+		// primero se muestran las canchas registradas actualmente en el sistema
+		System.out.println("Estas son las canchas registradas en el sistema:");
+		for (int i = 0; i < canchas.size(); i++) {
+			System.out.println((i + 1) + ". " + canchas.get(i).getNombre());
+		}
 
+		// luego se pregunta cual cancha se desea elimninar
+		System.out.print("Elija una opción [1-" + canchas.size() + "]: ");
+
+		int eleccion = sc.nextInt();
+		sc.nextLine();
+
+		// luego se muestra un prompt de confirmación
+		System.out.print("Está seguro de que desea eliminar la cancha "
+				+ canchas.get(eleccion - 1).getNombre() + "? [s/n]: ");
+
+		String confirmacion = sc.next();
+
+		switch (confirmacion) {
+		case "s":
+			// se borra la cancha de su sede
+			if (canchas.get(eleccion - 1).getSede()
+					.eliminarCancha(canchas.get(eleccion - 1).getNombre())) {
+
+				// se borra la cancha de la memoria
+				canchas.remove(eleccion - 1);
+
+				// luego se muestra un mensaje de confirmación
+				System.out.println("La cancha ha sido borrada exitosamente");
+
+				// se guardan los cambios
+				serializar();
+			} else {
+				System.out.println("Ocurrió un error al borrar la cancha.");
+			}
+			break;
+		case "n":
+			System.out.println("No se hicieron cambios.");
+			break;
+		default:
+			System.out
+					.println("Ha seleccionado una opción inválida. No se harán cambios. Adios");
+			System.exit(0);
+			break;
+		}
 	}
 
 	private void crearCancha() {
@@ -267,8 +435,11 @@ public class UI {
 			sede = sedes.get(opcion - 1);
 
 			// se crea la cancha
+			Cancha cancha = new Cancha(nombreDeCancha, sede);
+			canchas.add(cancha);
 
-			canchas.add(new Cancha(nombreDeCancha, sede));
+			// se guarda la referencia de la cancha en la sede
+			sede.addCancha(cancha);
 			serializar();
 			System.out.println("Se creó la cancha exitosamente");
 		}
@@ -277,12 +448,29 @@ public class UI {
 	private void consultarReserva() {
 		System.out
 				.println("Este es el listado de reservas registradas en el sistema:");
-		System.out.println("Apellido" + "\t" + "Nombre" + "\t" + "Cancha"
-				+ "\t" + "Sede" + "\t" + "Ciudad" + "\t" + "Inicio" + "\t"
-				+ "Fin");
-		for (int i = 0; i < reservas.size(); i++) {
-			System.out.println(reservas.get(i));
-					
+		for (Reserva r : reservas) {
+			System.out.println("Primer Apellido: "
+					+ r.getCliente().getPrimerApellido()
+					+ "\n"
+					+ "Primer Nombre: "
+					+ r.getCliente().getPrimerNombre()
+					+ "\n"
+					+ "Cancha: "
+					+ r.getCancha().getNombre()
+					+ "\n"
+					+ "Sede: "
+					+ r.getCancha().getSede().getNombre()
+					+ "\n"
+					+ "Ciudad: "
+					+ r.getCancha().getSede().getCiudad().getNombre()
+					+ "\n"
+					+ "Inicio: "
+					+ DateFormat.getDateTimeInstance().format(
+							r.getFechaHoraDeInicio().getTime())
+					+ "\n"
+					+ "Fin: "
+					+ DateFormat.getDateTimeInstance().format(
+							r.getFechaHoraDeFin().getTime()));
 		}
 	}
 
@@ -652,7 +840,7 @@ public class UI {
 			cliente = new Cliente(primerNombre, segundoNombre, primerApellido,
 					segundoApellido, docType, numeroDeDocumento,
 					numeroDeTelefono, direccion, email);
-			
+
 			clientes.add(cliente);
 
 			/*

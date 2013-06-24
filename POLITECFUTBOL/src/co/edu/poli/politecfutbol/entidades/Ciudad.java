@@ -25,6 +25,16 @@ public class Ciudad implements Serializable {
 		this.nombre = nombre;
 		this.sedes = new ArrayList<Sede>();
 	}
+	
+	public boolean eliminarSede(String nombreDeSede) {
+		for (int i = 0; i < sedes.size(); i++) {
+			if (sedes.get(i).getNombre().equals(nombreDeSede)) {
+				sedes.remove(i);
+				return true;
+			}
+		}
+		return false;
+	}
 
 	/*
 	 * Getters & Setters
@@ -43,5 +53,10 @@ public class Ciudad implements Serializable {
 
 	public void setSedes(Sede sede) {
 		this.sedes.add(sede);
+	}
+
+	public void addSede(Sede sede) {
+		this.sedes.add(sede);
+		
 	}
 }
